@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>太陽探査・軌道研究シミュレーター</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1b2e;--card:#11233a;--line:#29415f;--text:#f4f8ff;--muted:#9eb1c8;--accent:#5cc8ff;--ok:#5ee39b;--warn:#ffd166;--bad:#ff7b7b;--sun:#ffbf47}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:12px}.top{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:10px}.top h1{font-size:clamp(20px,4vw,30px);margin:0}.sub{color:var(--muted);font-size:13px;line-height:1.5}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 10px;font-size:12px;color:#cfe7ff}
+.grid{display:grid;grid-template-columns:360px minmax(0,1fr);gap:12px}.panel,.simcard,.resultcard{background:var(--panel);border:1px solid var(--line);border-radius:14px}.panel{padding:14px}.simcard{padding:10px}.resultcard{padding:14px;margin-top:12px}.section-title{font-weight:800;font-size:15px;margin:0 0 8px;color:#ccecff}.small{font-size:12px;color:var(--muted);line-height:1.55}.field{margin:10px 0}.field label{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;background:#081522;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px;min-height:44px}.field textarea{min-height:76px;resize:vertical}.range-row{display:grid;grid-template-columns:1fr 92px;gap:8px;align-items:center}.range-row input[type=range]{padding:0;min-height:32px}.value{background:#081522;border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center;font-size:12px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.actions button,.widebtn{border:0;border-radius:10px;min-height:46px;padding:10px;font-weight:800;color:#07111f}.launch{background:var(--ok)}.pause{background:var(--warn)}.reset{background:#d9e6f2}.record{background:var(--accent)}.widebtn{width:100%;margin-top:8px}.ghost{background:#152b43!important;color:#d7eaff!important;border:1px solid var(--line)!important}
+canvas{width:100%;height:auto;display:block;background:#02070e;border-radius:10px;touch-action:pan-y}.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}.metric{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:0}.metric b{display:block;font-size:11px;color:var(--muted);margin-bottom:3px}.metric span{font-size:14px;font-weight:800;word-break:break-word}.status{margin-top:8px;border-radius:10px;padding:9px 10px;background:#0a1929;border:1px solid var(--line);font-size:12px;line-height:1.55}.status.ok{border-color:#2d8a59}.status.warn{border-color:#8a6b25}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tab{background:#122940;color:#ccecff;border:1px solid var(--line);border-radius:999px;padding:8px 11px;font-size:12px}.tab.active{background:#22577a;border-color:#4cb3e8}.lesson{display:none}.lesson.active{display:block}.lesson h3{font-size:15px;margin:8px 0}.lesson p,.lesson li{font-size:12px;line-height:1.65;color:#cfdaea}.lesson ul{padding-left:20px}.callout{background:#0b2135;border-left:4px solid var(--accent);padding:9px 10px;border-radius:8px;margin:8px 0;font-size:12px;line-height:1.6}.formula{font-family:ui-monospace,Menlo,monospace;background:#07101c;border:1px solid var(--line);padding:9px;border-radius:9px;font-size:13px;overflow:auto}.result-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.score{font-size:30px;font-weight:900;color:var(--ok)}.badge{display:inline-block;border-radius:999px;padding:5px 9px;font-size:11px;font-weight:800;background:#15324e;border:1px solid var(--line);margin:2px}.reviewq{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px}.reviewq b{font-size:12px}.reviewq label{display:block;font-size:12px;margin:8px 0;color:#dce8f5}.reviewq textarea{width:100%;min-height:70px;background:#081522;color:white;border:1px solid var(--line);border-radius:8px;padding:9px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px;margin-top:8px}table{border-collapse:collapse;width:100%;min-width:820px;font-size:11px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:center}th{background:#11233a;position:sticky;top:0}.guide{margin-top:12px;background:#0a1a2c;border:1px solid var(--line);border-radius:12px;padding:12px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.step{background:#10243b;border-radius:9px;padding:9px;font-size:11px;line-height:1.5}.step strong{display:block;color:#ccecff;margin-bottom:4px}.footer-note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.55}
+@media(max-width:820px){.app{padding:8px}.grid{grid-template-columns:1fr}.panel{order:2}.simcard{order:1}.hud{grid-template-columns:repeat(2,1fr)}.result-grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.actions{position:sticky;bottom:6px;background:rgba(13,27,46,.95);padding:6px;border-radius:10px;z-index:5}.field input,.field select,.field textarea{font-size:16px}}
+@media(max-width:420px){.steps{grid-template-columns:1fr}.hud{grid-template-columns:1fr 1fr}.top h1{font-size:20px}}
+@media print{body{background:#fff;color:#111}.app{max-width:none}.panel,.simcard,.resultcard,.guide,.metric,.reviewq{background:#fff;color:#111;border-color:#bbb}.top .pill,.actions,.tabs,#simCanvas{display:none!important}.small,.lesson p,.lesson li,.footer-note{color:#333}.tablewrap{overflow:visible}table{min-width:0;font-size:9px}.resultcard{break-inside:avoid}.grid{grid-template-columns:1fr}.panel{display:none}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="top">
+    <div><h1>☀️ 太陽探査・軌道研究シミュレーター</h1><div class="sub">ケプラーの法則 × ツィオルコフスキーのロケット方程式を「予想 → 打ち上げ → 観察 → 振り返り」で学ぶ</div></div>
+    <div class="pill">中学1年向け・スマホ / PC共通</div>
+  </div>
+
+  <div class="grid">
+    <section class="panel">
+      <h2 class="section-title">① 打ち上げ前に条件を決める</h2>
+      <div class="small">地球は太陽のまわりを約29.8 km/sで公転しています。探査機はその速さを受け継いで出発します。そこから「どの向きに、どれだけ速度を足すか」を決めます。</div>
+
+      <div class="field"><label><span>チャレンジ</span></label><select id="mission"><option value="inner">太陽に近づく軌道を作る</option><option value="outer">地球より外側へ大きく広がる軌道</option><option value="ellipse">細長い楕円軌道を作る</option><option value="free">自由研究</option></select></div>
+      <div class="field"><label><span>最初の予想（仮説）</span></label><textarea id="hypothesis" placeholder="例：進行方向と反対に噴射すると、太陽に近づくと思う。"></textarea></div>
+
+      <div class="field"><label><span>機体の乾燥質量</span><span>燃料を除いた重さ</span></label><div class="range-row"><input id="dryRange" type="range" min="200" max="3000" step="100" value="1000"><div class="value"><span id="dryVal">1000</span> kg</div></div></div>
+      <div class="field"><label><span>燃料質量</span><span>多いほどΔvは増えるが重くなる</span></label><div class="range-row"><input id="fuelRange" type="range" min="100" max="9000" step="100" value="3000"><div class="value"><span id="fuelVal">3000</span> kg</div></div></div>
+      <div class="field"><label><span>排気速度 ve</span><span>エンジン性能の目安</span></label><div class="range-row"><input id="veRange" type="range" min="2" max="6" step="0.1" value="4.4"><div class="value"><span id="veVal">4.4</span> km/s</div></div></div>
+      <div class="field"><label><span>燃料を使う割合</span></label><div class="range-row"><input id="burnRange" type="range" min="10" max="100" step="5" value="55"><div class="value"><span id="burnVal">55</span> %</div></div></div>
+      <div class="field"><label><span>噴射方向</span><span>0°=地球の進行方向</span></label><div class="range-row"><input id="angleRange" type="range" min="-180" max="180" step="5" value="180"><div class="value"><span id="angleVal">180</span>°</div></div><div class="small">0°：進行方向へ加速　／　180°：進行方向と反対に減速　／　±90°：太陽から見て内外方向</div></div>
+
+      <div class="callout" id="precalc"></div>
+      <div class="actions"><button class="launch" id="launchBtn">🚀 打ち上げ</button><button class="pause" id="pauseBtn">⏸ 一時停止</button><button class="reset" id="resetBtn">↺ 条件をやり直す</button><button class="record" id="recordBtn">📝 この結果を記録</button></div>
+      <button class="widebtn ghost" id="printBtn">🖨️ 結果・振り返りを印刷</button>
+    </section>
+
+    <section class="simcard">
+      <canvas id="simCanvas" width="900" height="620" aria-label="太陽と探査機の軌道シミュレーション"></canvas>
+      <div class="hud">
+        <div class="metric"><b>経過時間</b><span id="mDay">0 日</span></div>
+        <div class="metric"><b>太陽からの距離</b><span id="mDist">1.000 AU</span></div>
+        <div class="metric"><b>探査機の速さ</b><span id="mSpeed">29.78 km/s</span></div>
+        <div class="metric"><b>理論Δv</b><span id="mDv">0.00 km/s</span></div>
+        <div class="metric"><b>近日点</b><span id="mPeri">—</span></div>
+        <div class="metric"><b>遠日点</b><span id="mApo">—</span></div>
+        <div class="metric"><b>軌道周期</b><span id="mPeriod">—</span></div>
+        <div class="metric"><b>離心率 e</b><span id="mEcc">—</span></div>
+      </div>
+      <div class="status" id="statusBox">打ち上げ前です。条件を決めて「打ち上げ」を押してください。</div>
+
+      <div class="guide">
+        <div class="section-title">クラスメイト向け 4ステップ</div>
+        <div class="steps"><div class="step"><strong>1. 予想する</strong>どの向きに噴射したら太陽へ近づく？ まず自分の予想を書く。</div><div class="step"><strong>2. 条件を決める</strong>質量・燃料・エンジン性能・噴射方向を設定。</div><div class="step"><strong>3. 結果を見る</strong>近日点・遠日点・速度・軌道周期を観察。</div><div class="step"><strong>4. 振り返る</strong>予想と結果が合ったか、ケプラーの法則とつながったかを自己評価。</div></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="resultcard">
+    <div class="tabs"><button class="tab active" data-tab="result">打ち上げ評価</button><button class="tab" data-tab="kepler">ケプラーの法則</button><button class="tab" data-tab="rocket">ロケット方程式</button><button class="tab" data-tab="review">自己評価・振り返り</button></div>
+
+    <div class="lesson active" id="tab-result">
+      <h2 class="section-title">② 打ち上げ後の評価</h2>
+      <div class="result-grid"><div><div class="score" id="score">—</div><div class="small">ミッション達成度（100点満点）</div><div id="badges"></div></div><div class="callout" id="evaluation">まだ結果はありません。打ち上げ後に自動評価します。</div></div>
+      <div class="tablewrap"><table><thead><tr><th>項目</th><th>設定・結果</th><th>考察のヒント</th></tr></thead><tbody id="analysisRows"></tbody></table></div>
+    </div>
+
+    <div class="lesson" id="tab-kepler">
+      <h2 class="section-title">ケプラーの3法則をこのアプリで見る</h2>
+      <h3>第1法則：惑星の軌道は「楕円」</h3>
+      <p><b>ひとことで：</b>惑星や探査機は、太陽のまわりを必ずしも真ん丸に回るわけではありません。少しつぶれた円＝<b>楕円</b>になることがあります。そして太陽は楕円のど真ん中ではなく、<b>焦点</b>という少しずれた場所にあります。</p>
+      <div class="callout"><b>たとえると：</b>運動場のトラックのような形をもっと丸くしたものを想像しよう。太陽に近い場所を<b>近日点</b>、一番遠い場所を<b>遠日点</b>と呼びます。<br><b>このアプリでは：</b>「離心率 e」を見る。e=0に近いほど円、eが大きいほど細長い軌道です。噴射方向やΔvを変えて形がどう変わるか比べよう。</div>
+      <h3>第2法則：太陽に近いほど「速い」</h3>
+      <p><b>ひとことで：</b>同じ探査機でも速度は一定ではありません。太陽に近づくと速くなり、遠ざかると遅くなります。正確には、<b>太陽と探査機を結ぶ線が、同じ時間に掃く面積は同じ</b>という法則です。</p>
+      <div class="callout"><b>なぜ？</b>太陽に近いほど重力の影響が強く、探査機は大きく加速されます。遠い場所ではゆっくりになります。<br><b>このアプリでは：</b>10日ごとの掃過面積と速度を比べます。「近い＝速い、遠い＝遅い」なのに面積がほぼ同じになるか観察しよう。</div><div class="formula" id="areaLaw">10日ごとの掃過面積：打ち上げ後に計測します</div>
+      <h3>第3法則：遠くを回るほど「一周が長い」</h3>
+      <p><b>ひとことで：</b>太陽から遠い軌道ほど、一周するのに長い時間がかかります。地球は約1年、火星は約1.88年、木星は約11.86年です。</p>
+      <p>太陽からの平均的な軌道の大きさ（半長軸）を a [AU]、公転周期を T [年] とすると、太陽を回る天体では <b>T² / a³ がほぼ1</b>になります。式を暗記するより、「遠くなると一周にかかる時間がかなり長くなる」と理解すればOKです。</p><div class="formula" id="thirdLaw">T² / a³ = —</div>
+      <div class="callout"><b>中1向け3秒暗記：</b> ①軌道は楕円　②近いと速い　③遠いと一年が長い<br><b>実験のコツ：</b>1回ごとに変える条件を1つだけにして、近日点・遠日点・速度・周期を比較すると「なぜ変わったか」を考えやすくなります。</div>
+    </div>
+
+    <div class="lesson" id="tab-rocket">
+      <h2 class="section-title">ツィオルコフスキーのロケット方程式</h2>
+      <p>ロケットは車のように地面を蹴って進むのではありません。燃料を燃やして<b>ガスを後ろへ勢いよく噴き出す</b>と、その反作用でロケットが前へ進みます。宇宙に空気がなくても進める理由です。</p>
+      <div class="callout"><b>ツィオルコフスキーの発見：</b>ロケットがどれだけ速度を変えられるかは、①エンジンがどれだけ速くガスを噴射できるか、②燃焼前と燃焼後でどれだけ軽くなるか、で決まります。</div>
+      <div class="formula">Δv = ve × ln(m₀ / m₁)</div>
+      <ul><li><b>Δv（デルタ・ブイ）</b>：最高速度ではなく、ロケットが「速度をどれだけ変えられる能力を持つか」。宇宙旅行の予算のようなもの。</li><li><b>ve</b>：排気速度。ガスを速く後ろへ出せるエンジンほど有利。</li><li><b>m₀</b>：燃焼前の総質量。機体＋まだ残っている燃料。</li><li><b>m₁</b>：燃焼後の質量。燃料を使ったあとに残る機体など。</li><li><b>ln</b>：中学校ではまだ習わなくてOK。「重さの比をそのまま比例させないための計算」と考えよう。</li></ul>
+      <div class="callout" id="rocketExplain">条件を変えると、ここに今回の計算結果が表示されます。</div>
+      <p><b>中1で一番大事：</b>燃料を増やすと使えるエネルギーは増えます。でも、その燃料自体も重くなります。だから<b>燃料2倍＝Δv2倍ではありません</b>。使い終わったタンクやエンジンを分離して軽くする多段式ロケットにもつながります。</p>
+      <div class="callout"><b>太陽探査とのつながり：</b>地球は太陽の周りを約30 km/sで公転しています。太陽へ近づきたいときは、単純に太陽へ向けて噴射するより、地球から受け継いだ横向きの公転速度を減らす噴射が重要です。設定した「噴射方向」とΔvを変えて、近日点がどう変わるか試してみよう。</div>
+    </div>
+
+    <div class="lesson" id="tab-review">
+      <h2 class="section-title">③ 自己評価・振り返り</h2>
+      <div class="reviewq"><b>Q1. 打ち上げ前の予想と比べてどうだった？</b><label><input type="radio" name="q1" value="予想通り"> 予想通りだった</label><label><input type="radio" name="q1" value="一部違った"> 一部違った</label><label><input type="radio" name="q1" value="大きく違った"> 大きく違った</label></div>
+      <div class="reviewq"><b>Q2. 今日いちばん分かったことは？</b><label><input type="checkbox" class="learn" value="ケプラー第1法則"> 楕円軌道（第1法則）</label><label><input type="checkbox" class="learn" value="ケプラー第2法則"> 太陽に近いほど速い（第2法則）</label><label><input type="checkbox" class="learn" value="ケプラー第3法則"> 遠い軌道ほど周期が長い（第3法則）</label><label><input type="checkbox" class="learn" value="ロケット方程式"> 燃料・質量・Δvの関係</label></div>
+      <div class="reviewq"><b>Q3. 予想と結果が違った理由を自分の言葉で</b><textarea id="reviewReason" placeholder="例：太陽へ近づくには太陽向きに噴射すると思ったが、進行方向と反対に噴射して公転速度を落とす方が近日点が小さくなった。"></textarea></div>
+      <div class="reviewq"><b>Q4. 次に変えて試したい条件</b><textarea id="nextTry" placeholder="例：燃料の量は同じにして、噴射方向だけ180°と135°で比べたい。"></textarea></div>
+      <button class="widebtn record" id="selfScoreBtn">✅ 自己評価をまとめる</button>
+      <div class="callout" id="selfSummary">まだ自己評価は作成していません。</div>
+    </div>
+  </section>
+
+  <section class="resultcard">
+    <h2 class="section-title">④ 実験記録（最大8回）</h2>
+    <div class="small">同じ機体で噴射方向だけ変える、燃料だけ変えるなど「1つだけ条件を変える」と比較しやすくなります。</div>
+    <div class="tablewrap"><table><thead><tr><th>#</th><th>ミッション</th><th>仮説</th><th>燃料kg</th><th>噴射方向</th><th>Δv</th><th>近日点AU</th><th>遠日点AU</th><th>周期年</th><th>点数</th></tr></thead><tbody id="historyBody"></tbody></table></div>
+    <button class="widebtn ghost" id="clearHistoryBtn">記録をすべて消す</button>
+  </section>
+
+  <div class="footer-note">※これは中学生向けの学習用モデルです。太陽と探査機を主に扱い、惑星の重力、大気抵抗、実際のロケットの長時間燃焼、姿勢制御などは簡略化しています。数値そのものより「条件を1つ変えると結果がどう変わるか」を考察するために使ってください。</div>
+</div>
+
+<script>
+(()=>{
+const AU=149597870.7, MU=1.32712440018e11, DAY=86400, YEAR_DAYS=365.256, EARTH_V=Math.sqrt(MU/AU);
+const $=id=>document.getElementById(id);
+const canvas=$('simCanvas'),ctx=canvas.getContext('2d');
+const state={running:false,paused:false,t:0,probe:null,earthTheta:0,raf:null,last:0,dtDays:0.32,track:[],areaBuckets:[],areaNow:0,areaBucketStart:0,peri:Infinity,apo:0,lastResult:null,history:[]};
+const inputs={dry:$('dryRange'),fuel:$('fuelRange'),ve:$('veRange'),burn:$('burnRange'),angle:$('angleRange')};
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function fmt(v,n=2){return Number.isFinite(v)?v.toFixed(n):'—'}
+function values(){return{dry:+inputs.dry.value,fuel:+inputs.fuel.value,ve:+inputs.ve.value,burn:+inputs.burn.value/100,angle:+inputs.angle.value,mission:$('mission').value,hypothesis:$('hypothesis').value.trim()}}
+function calcRocket(){const v=values(),m0=v.dry+v.fuel,burned=v.fuel*v.burn,m1=m0-burned,dv=v.ve*Math.log(m0/m1);return{...v,m0,m1,burned,dv}}
+function refreshInputs(){const v=calcRocket();$('dryVal').textContent=v.dry;$('fuelVal').textContent=v.fuel;$('veVal').textContent=v.ve.toFixed(1);$('burnVal').textContent=Math.round(v.burn*100);$('angleVal').textContent=v.angle;$('mDv').textContent=fmt(v.dv,2)+' km/s';$('precalc').innerHTML=`<b>打ち上げ前の計算</b><br>燃焼前質量 m₀ = ${Math.round(v.m0)} kg ／ 燃焼後質量 m₁ = ${Math.round(v.m1)} kg<br>ツィオルコフスキー式による理論Δv = <b>${fmt(v.dv,2)} km/s</b>`;$('rocketExplain').innerHTML=`今回：ve=${v.ve.toFixed(1)} km/s、m₀=${Math.round(v.m0)} kg、m₁=${Math.round(v.m1)} kg<br>→ Δv = ${v.ve.toFixed(1)} × ln(${Math.round(v.m0)} / ${Math.round(v.m1)}) = <b>${fmt(v.dv,2)} km/s</b>`}
+Object.values(inputs).forEach(i=>i.addEventListener('input',refreshInputs));
+function launch(){const r=calcRocket();state.running=true;state.paused=false;state.t=0;state.track=[];state.areaBuckets=[];state.areaNow=0;state.areaBucketStart=0;state.peri=Infinity;state.apo=0;state.earthTheta=0;const a=r.angle*Math.PI/180;const dvx=r.dv*Math.sin(a),dvy=r.dv*Math.cos(a);state.probe={x:AU,y:0,vx:dvx,vy:EARTH_V+dvy,prevx:AU,prevy:0};state.lastResult=null;$('statusBox').className='status ok';$('statusBox').textContent='打ち上げ成功。太陽の重力だけを主に使った軌道を計算中です。500日で自動停止します。';$('pauseBtn').textContent='⏸ 一時停止';if(!state.raf){state.last=performance.now();state.raf=requestAnimationFrame(loop)}evaluate(false)}
+function reset(){state.running=false;state.paused=false;state.t=0;state.probe=null;state.track=[];state.areaBuckets=[];state.peri=Infinity;state.apo=0;state.lastResult=null;updateMetrics();draw();$('score').textContent='—';$('badges').innerHTML='';$('evaluation').textContent='まだ結果はありません。打ち上げ後に自動評価します。';$('analysisRows').innerHTML='';$('areaLaw').textContent='10日ごとの掃過面積：打ち上げ後に計測します';$('thirdLaw').textContent='T² / a³ = —';$('statusBox').className='status';$('statusBox').textContent='打ち上げ前です。条件を決めて「打ち上げ」を押してください。'}
+function accel(x,y){const r=Math.hypot(x,y),f=-MU/(r*r*r);return{x:f*x,y:f*y}}
+function step(dt){const p=state.probe;if(!p)return;const a0=accel(p.x,p.y);p.vx+=a0.x*dt/2;p.vy+=a0.y*dt/2;p.prevx=p.x;p.prevy=p.y;p.x+=p.vx*dt;p.y+=p.vy*dt;const a1=accel(p.x,p.y);p.vx+=a1.x*dt/2;p.vy+=a1.y*dt/2;state.t+=dt;state.earthTheta+=2*Math.PI*dt/(YEAR_DAYS*DAY);const r=Math.hypot(p.x,p.y)/AU;state.peri=Math.min(state.peri,r);state.apo=Math.max(state.apo,r);state.areaNow+=Math.abs(p.prevx*p.y-p.prevy*p.x)/2/(AU*AU);const day=state.t/DAY;if(day-state.areaBucketStart>=10){state.areaBuckets.push(state.areaNow);if(state.areaBuckets.length>6)state.areaBuckets.shift();state.areaNow=0;state.areaBucketStart=day}if(state.track.length===0||day-state.track[state.track.length-1].day>.8){state.track.push({x:p.x/AU,y:p.y/AU,day});if(state.track.length>750)state.track.shift()}}
+function orbitalElements(){const p=state.probe;if(!p)return null;const r=Math.hypot(p.x,p.y),v2=p.vx*p.vx+p.vy*p.vy,energy=v2/2-MU/r,h=p.x*p.vy-p.y*p.vx;let a=-MU/(2*energy),e=Math.sqrt(Math.max(0,1+2*energy*h*h/(MU*MU))),period=energy<0?2*Math.PI*Math.sqrt(a*a*a/MU):NaN;return{aAU:a/AU,e,periodYears:period/(YEAR_DAYS*DAY),energy,h}}
+function evaluate(final){if(!state.probe)return;const o=orbitalElements(),r=calcRocket(),peri=o&&o.energy<0?o.aAU*(1-o.e):state.peri,apo=o&&o.energy<0?o.aAU*(1+o.e):Infinity;let score=50,notes=[],badges=[];if(r.mission==='inner'){const hit=peri<0.75;score=hit?90:Math.round(clamp(55+(1-peri)*80,20,88));notes.push(hit?'近日点が0.75AUより内側になり、太陽へ近づくミッションに成功。':'近日点はまだ地球軌道に近い。進行方向と反対向きの噴射を試すとどうなるか考えてみよう。')}else if(r.mission==='outer'){const hit=Number.isFinite(apo)&&apo>1.35;score=hit?90:Math.round(clamp(50+(apo-1)*100,20,88));notes.push(hit?'遠日点が1.35AUを超え、外側へ広がる軌道を作れた。':'進行方向への加速を増やすと、遠日点がどう変わるか比べてみよう。')}else if(r.mission==='ellipse'){const hit=o&&o.energy<0&&o.e>.25&&o.e<.85;score=hit?92:Math.round(clamp(55+(o?o.e:0)*60,20,88));notes.push(hit?'離心率が大きい楕円軌道を作れた。近日点と遠日点で速度を比べてみよう。':'離心率 e を0.25〜0.85くらいにすると、円との違いが見えやすい。')}else{score=80;notes.push('自由研究モード。点数よりも「1条件だけ変えて比較」できたかを重視しよう。')}
+if(o&&o.energy<0){badges.push('楕円軌道');if(o.e<.08)badges.push('ほぼ円軌道');if(o.e>.35)badges.push('細長い軌道');const ratio=o.periodYears*o.periodYears/(o.aAU*o.aAU*o.aAU);if(Math.abs(ratio-1)<.03){badges.push('ケプラー第3法則 ◎');score+=5}$('thirdLaw').textContent=`T² / a³ = ${fmt(ratio,3)} （太陽周回なら約1）`;}else{badges.push('脱出軌道');notes.push('太陽に束縛された楕円ではなく、太陽系外へ向かう軌道になっています。')}
+if(state.areaBuckets.length>=3){const arr=state.areaBuckets.slice(-3),avg=arr.reduce((a,b)=>a+b,0)/arr.length,variation=(Math.max(...arr)-Math.min(...arr))/avg*100;$('areaLaw').textContent=`直近10日×3区間の掃過面積：${arr.map(x=>x.toExponential(3)+' AU²').join(' / ')}　差=${fmt(variation,2)}%`;if(variation<2){badges.push('ケプラー第2法則 ◎');score+=5}}
+score=clamp(score,0,100);$('score').textContent=score+' 点';$('badges').innerHTML=badges.map(b=>`<span class="badge">${b}</span>`).join('');$('evaluation').innerHTML=`<b>${notes[0]}</b><br>${final?'この結果を実験記録に残し、次は条件を1つだけ変えて比較すると考察しやすくなります。':'シミュレーション中。数値は時間とともに更新されます。'}`;
+const angleMeaning=r.angle===0?'進行方向へ加速':Math.abs(r.angle)===180?'進行方向と反対へ減速':r.angle>0?'進行方向から右へずらして噴射':'進行方向から左へずらして噴射';$('analysisRows').innerHTML=`<tr><td>噴射方向</td><td>${r.angle}°（${angleMeaning}）</td><td>太陽に近づくには、単に太陽へ向けて噴射するとは限らない。</td></tr><tr><td>ロケット方程式</td><td>Δv=${fmt(r.dv,2)} km/s</td><td>燃料を増やすとΔvは増えるが、対数なので比例ではない。</td></tr><tr><td>近日点</td><td>${Number.isFinite(peri)?fmt(peri,3)+' AU':'—'}</td><td>太陽に最も近い場所。ここでは速度が大きくなりやすい。</td></tr><tr><td>遠日点</td><td>${Number.isFinite(apo)?fmt(apo,3)+' AU':'脱出'}</td><td>太陽から最も遠い場所。ここでは速度が小さくなりやすい。</td></tr><tr><td>離心率</td><td>${o?fmt(o.e,3):'—'}</td><td>0に近いほど円。1に近いほど細長い楕円。</td></tr><tr><td>軌道周期</td><td>${o&&o.energy<0?fmt(o.periodYears,3)+' 年':'—'}</td><td>平均距離が大きい軌道ほど一周に時間がかかる。</td></tr>`;state.lastResult={score,r,o,peri,apo};}
+function updateMetrics(){const p=state.probe,o=orbitalElements();$('mDay').textContent=fmt(state.t/DAY,0)+' 日';$('mDv').textContent=fmt(calcRocket().dv,2)+' km/s';if(!p){$('mDist').textContent='1.000 AU';$('mSpeed').textContent=fmt(EARTH_V,2)+' km/s';$('mPeri').textContent='—';$('mApo').textContent='—';$('mPeriod').textContent='—';$('mEcc').textContent='—';return}const d=Math.hypot(p.x,p.y)/AU,s=Math.hypot(p.vx,p.vy);$('mDist').textContent=fmt(d,3)+' AU';$('mSpeed').textContent=fmt(s,2)+' km/s';$('mPeri').textContent=Number.isFinite(state.peri)?fmt(state.peri,3)+' AU':'—';$('mApo').textContent=state.apo?fmt(state.apo,3)+' AU':'—';$('mPeriod').textContent=o&&o.energy<0?fmt(o.periodYears,2)+' 年':'脱出';$('mEcc').textContent=o?fmt(o.e,3):'—'}
+function draw(){const w=canvas.width,h=canvas.height;ctx.fillStyle='#02070e';ctx.fillRect(0,0,w,h);const scale=Math.min(w,h)*0.22,cx=w/2,cy=h/2;for(let a=.5;a<=2;a+=.5){ctx.strokeStyle='#14283e';ctx.lineWidth=1;ctx.beginPath();ctx.arc(cx,cy,a*scale,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#668099';ctx.font='12px sans-serif';ctx.fillText(a.toFixed(1)+' AU',cx+a*scale+4,cy-4)}ctx.fillStyle='#ffbf47';ctx.beginPath();ctx.arc(cx,cy,15,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffe4a3';ctx.font='12px sans-serif';ctx.fillText('太陽',cx+19,cy+4);ctx.strokeStyle='#335778';ctx.beginPath();ctx.arc(cx,cy,scale,0,Math.PI*2);ctx.stroke();const ex=Math.cos(state.earthTheta)*scale,ey=Math.sin(state.earthTheta)*scale;ctx.fillStyle='#5cc8ff';ctx.beginPath();ctx.arc(cx+ex,cy+ey,6,0,Math.PI*2);ctx.fill();ctx.fillStyle='#9edcff';ctx.fillText('地球',cx+ex+9,cy+ey-7);if(state.track.length>1){ctx.strokeStyle='#ff7b7b';ctx.lineWidth=2;ctx.beginPath();state.track.forEach((pt,i)=>{const x=cx+pt.x*scale,y=cy+pt.y*scale;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke()}if(state.probe){const px=cx+state.probe.x/AU*scale,py=cy+state.probe.y/AU*scale;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText('探査機',px+8,py-8);ctx.strokeStyle='rgba(255,255,255,.18)';ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(px,py);ctx.stroke()}ctx.fillStyle='#72879c';ctx.font='11px sans-serif';ctx.fillText('※距離は学習用に縮尺表示',10,h-12)}
+function loop(now){state.raf=requestAnimationFrame(loop);if(!state.running||state.paused){draw();return}const steps=6,dt=state.dtDays*DAY/steps;for(let i=0;i<steps;i++)step(dt);updateMetrics();draw();const day=state.t/DAY;if(Math.floor(day)%5===0)evaluate(false);if(day>=500){state.running=false;evaluate(true);$('statusBox').className='status warn';$('statusBox').textContent='500日まで計算しました。結果を記録して、次の条件と比較してみましょう。'}}
+$('launchBtn').addEventListener('click',launch);$('pauseBtn').addEventListener('click',()=>{if(!state.probe)return;state.paused=!state.paused;$('pauseBtn').textContent=state.paused?'▶ 再開':'⏸ 一時停止';if(state.paused)evaluate(true)});$('resetBtn').addEventListener('click',reset);
+$('recordBtn').addEventListener('click',()=>{if(!state.lastResult){alert('先に打ち上げて結果を出してください。');return}const x=state.lastResult,h=$('hypothesis').value.trim()||'（未記入）',mission=$('mission').selectedOptions[0].textContent;state.history.unshift({mission,h,fuel:x.r.fuel,angle:x.r.angle,dv:x.r.dv,peri:x.peri,apo:x.apo,period:x.o&&x.o.energy<0?x.o.periodYears:NaN,score:x.score});state.history=state.history.slice(0,8);renderHistory()});
+function renderHistory(){$('historyBody').innerHTML=state.history.map((x,i)=>`<tr><td>${i+1}</td><td>${x.mission}</td><td style="text-align:left">${escapeHtml(x.h)}</td><td>${x.fuel}</td><td>${x.angle}°</td><td>${fmt(x.dv,2)}</td><td>${fmt(x.peri,3)}</td><td>${Number.isFinite(x.apo)?fmt(x.apo,3):'脱出'}</td><td>${Number.isFinite(x.period)?fmt(x.period,2):'—'}</td><td>${x.score}</td></tr>`).join('')}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('clearHistoryBtn').addEventListener('click',()=>{if(confirm('実験記録をすべて消しますか？')){state.history=[];renderHistory()}});$('printBtn').addEventListener('click',()=>window.print());
+$('selfScoreBtn').addEventListener('click',()=>{const q1=document.querySelector('input[name=q1]:checked')?.value||'未回答',learn=[...document.querySelectorAll('.learn:checked')].map(x=>x.value),reason=$('reviewReason').value.trim()||'未記入',next=$('nextTry').value.trim()||'未記入';let score=0;if(q1!=='未回答')score+=25;if(learn.length)score+=25;if(reason!=='未記入')score+=25;if(next!=='未記入')score+=25;$('selfSummary').innerHTML=`<b>振り返り完成度：${score}/100</b><br>予想との比較：${q1}<br>分かったこと：${learn.join('、')||'未選択'}<br>考察：${escapeHtml(reason)}<br>次の実験：${escapeHtml(next)}`});
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.lesson').forEach(x=>x.classList.remove('active'));b.classList.add('active');$('tab-'+b.dataset.tab).classList.add('active')}));
+refreshInputs();updateMetrics();draw();state.raf=requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
