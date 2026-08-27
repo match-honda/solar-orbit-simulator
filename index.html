@@ -15,7 +15,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);c
 button{font:inherit}
 .hidden{display:none!important}
 #build-ui{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:30;width:min(270px,calc(100vw - 20px));max-height:calc(100vh - 80px);overflow:auto;background:var(--panel);border:1px solid #1e3a8a;border-radius:14px;padding:12px;box-shadow:0 8px 28px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
-#build-ui h1{margin:0 0 9px;font-size:16px;color:#7dd3fc}.build-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.build-title-row h1{margin:0!important}.panel-toggle{width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:10px!important;background:#0f172a!important;border:1px solid #38bdf8!important;color:#bae6fd!important}.gesture-strip{margin:7px 0 9px;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.gesture-chip{padding:6px 5px;border-radius:8px;background:#0f172a;border:1px solid #334155;text-align:center;font-size:9px;color:#cbd5e1;line-height:1.35}.gesture-chip b{color:#7dd3fc;display:block;font-size:10px}.builder-collapsed .builder-grid,.builder-collapsed .sep,.builder-collapsed .builder-actions,.builder-collapsed .hint,.builder-collapsed .gesture-strip{display:none}.builder-collapsed{width:auto!important;max-height:none!important}.builder-collapsed .build-title-row{min-width:190px}
+#build-ui h1{margin:0 0 9px;font-size:16px;color:#7dd3fc}.build-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.build-title-row h1{margin:0!important}.panel-toggle{width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:10px!important;background:#0f172a!important;border:1px solid #38bdf8!important;color:#bae6fd!important}.gesture-strip{margin:7px 0 9px;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.gesture-chip{padding:6px 5px;border-radius:8px;background:#0f172a;border:1px solid #334155;text-align:center;font-size:9px;color:#cbd5e1;line-height:1.35}.gesture-chip b{color:#7dd3fc;display:block;font-size:10px}.builder-coach{margin:7px 0 9px;padding:9px;border-radius:10px;background:#071a2b;border:1px solid #0ea5e9}.coach-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}.coach-title{font-weight:900;color:#7dd3fc;font-size:11px}.coach-status{font-size:9px;padding:3px 7px;border-radius:999px;background:#172033;border:1px solid #334155;color:#cbd5e1}.coach-message{font-size:10px;line-height:1.5;color:#e2e8f0}.coach-message b{color:#fff}.coach-next{display:flex;gap:5px;align-items:center;margin-top:7px;flex-wrap:wrap}.coach-next button{width:auto!important;min-height:30px!important;padding:5px 8px!important;font-size:9px!important;background:#075985!important;border-color:#0ea5e9!important}.coach-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:7px}.coach-stat{padding:5px;border-radius:7px;background:#0f172a;border:1px solid #26364d;text-align:center;font-size:8px;color:#94a3b8}.coach-stat b{display:block;color:#f8fafc;font-size:10px;margin-top:2px}.builder-collapsed .builder-grid,.builder-collapsed .sep,.builder-collapsed .builder-actions,.builder-collapsed .hint,.builder-collapsed .gesture-strip,.builder-collapsed .builder-coach{display:none}.builder-collapsed{width:auto!important;max-height:none!important}.builder-collapsed .build-title-row{min-width:190px}
 #build-ui .hint{font-size:10px;color:var(--muted);margin:0 0 8px;line-height:1.45}
 .builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.builder-grid button,.builder-actions button,.top-btn,.hud-btn,.dpad button{border:1px solid #475569;background:#172033;color:#fff;border-radius:8px;cursor:pointer;font-weight:700}
 .builder-grid button{padding:8px 6px;font-size:10px;min-height:38px}.builder-grid button.active{background:#c2410c;border-color:#fb923c;box-shadow:0 0 10px rgba(249,115,22,.35)}
@@ -68,6 +68,12 @@ button{font:inherit}
   <div class="build-title-row"><h1>🚀 ロケットビルダー</h1><button id="panel-toggle" class="panel-toggle" type="button">▼ 小さくする</button></div>
   <p class="hint">スマホは画面を直接動かせます。パーツ配置は短くタップ。</p>
   <div class="gesture-strip"><div class="gesture-chip"><b>☝️ 1本指</b>ドラッグ＝回転</div><div class="gesture-chip"><b>✌️ 2本指</b>ドラッグ＝画面移動</div><div class="gesture-chip"><b>🤏 ピンチ</b>拡大・縮小</div><div class="gesture-chip"><b>👆 タップ</b>パーツ配置</div></div>
+  <div class="builder-coach" id="builder-coach">
+    <div class="coach-head"><div class="coach-title">🧑‍🚀 組み立てコーチ</div><div class="coach-status" id="coach-status">STEP 1</div></div>
+    <div class="coach-message" id="coach-message">まずは<b>司令船</b>を1つ置こう。ロケットの頭・司令室になる必須パーツです。</div>
+    <div class="coach-next" id="coach-next"></div>
+    <div class="coach-stats"><div class="coach-stat">パーツ<b id="coach-parts">0個</b></div><div class="coach-stat">推定質量<b id="coach-mass">0 kg</b></div><div class="coach-stat">研究準備<b id="coach-ready">未完</b></div></div>
+  </div>
   <div class="builder-grid" id="part-buttons"></div>
   <div class="sep"></div>
   <div class="builder-actions">
@@ -105,6 +111,7 @@ const PARTS=[
  ['decoupler1','🔴 第1分離'],['decoupler2','🟠 第2分離'],['decoupler3','🟡 第3分離'],['decoupler4','🟢 第4分離'],['decoupler5','🔵 第5分離'],
  ['rcs','姿勢制御'],['landing_gear','着陸脚'],['satellite','人工衛星'],['fin','安定翼']
 ];
+const PART_INFO={command:['司令船','ロケットの頭・司令室。発射には必須。'],body_block:['本体ブロック','機体を長くしたり形を整える。増やしすぎると重くなる。'],fuel:['燃料タンク','燃料が増えて長く加速できるが、その燃料自体も重い。'],fuel_engine:['燃料+エンジン','推進力を生む必須パーツ。まず1基置こう。'],fairing:['フェアリング','衛星などを空気から守るカバー。宇宙では不要になれば外す。'],decoupler1:['第1分離','使い終わった下段を捨てて軽くする。多段式の考え方につながる。'],decoupler2:['第2分離','さらに上段を分離する。段を増やすと設計が複雑になる。'],decoupler3:['第3分離','上級者向けの多段化。'],decoupler4:['第4分離','上級者向けの多段化。'],decoupler5:['第5分離','最上段分離。必要なときだけ使う。'],rcs:['姿勢制御','宇宙で向きを変える補助スラスタ。'],landing_gear:['着陸脚','着陸ミッション向け。太陽探査だけなら優先度は低い。'],satellite:['人工衛星','軌道へ投入する目的物。'],fin:['安定翼','大気中で姿勢を安定させる。宇宙ではほぼ働かない。']};
 let mode='BUILD', scene,camera,renderer,raycaster,mouse,plane,previewMesh;
 let cameraRadius=3.5,cameraTheta=Math.PI/4,cameraPhi=Math.PI/3;
 const target=new THREE.Vector3(0,1,0), placedParts=[], intersectables=[], textures={};
@@ -128,7 +135,7 @@ function aliveCount(){return currentAlive().length}
 function updateBodyPositions(){bodies.forEach(b=>{if(b.orbitDist){b.x=Math.cos(b.angle)*b.orbitDist;b.y=Math.sin(b.angle)*b.orbitDist}})}
 function buildPartButtons(){const host=$('part-buttons');PARTS.forEach(([id,label],i)=>{const b=document.createElement('button');b.textContent=label;b.dataset.part=id;if(i===0)b.classList.add('active');b.onclick=()=>selectPart(id);host.appendChild(b)})}
 let currentPart='command';
-function selectPart(type){currentPart=type;document.querySelectorAll('#part-buttons button').forEach(b=>b.classList.toggle('active',b.dataset.part===type));updatePreview()}
+function selectPart(type){currentPart=type;document.querySelectorAll('#part-buttons button').forEach(b=>b.classList.toggle('active',b.dataset.part===type));updatePreview();updateBuilderCoach(type)}
 function makeTexture(type){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');g.fillStyle='#475569';g.fillRect(0,0,128,128);if(type==='command'){const q=g.createLinearGradient(0,0,128,128);q.addColorStop(0,'#e2e8f0');q.addColorStop(1,'#475569');g.fillStyle=q;g.fillRect(0,0,128,128);g.fillStyle='#0f172a';g.beginPath();g.arc(64,45,17,0,Math.PI*2);g.fill();g.strokeStyle='#38bdf8';g.lineWidth=4;g.stroke()}else if(type==='fuel'||type==='fuel_engine'){g.fillStyle='#ea580c';g.fillRect(0,0,128,type==='fuel_engine'?64:128);g.fillStyle='#334155';if(type==='fuel_engine')g.fillRect(0,64,128,64);g.strokeStyle='#ffedd5';g.lineWidth=8;g.strokeRect(8,8,112,112)}else if(type.startsWith('decoupler')){const cc=['#dc2626','#ea580c','#ca8a04','#16a34a','#2563eb'][+type.slice(-1)-1];g.fillStyle='#1e293b';g.fillRect(0,0,128,128);g.fillStyle=cc;g.fillRect(0,0,128,25);g.fillRect(0,103,128,25)}else if(type==='satellite'){g.fillStyle='#0ea5e9';g.fillRect(0,0,128,128);g.strokeStyle='#bae6fd';g.lineWidth=5;g.strokeRect(12,12,104,104)}else if(type==='fin'){g.fillStyle='#0284c7';g.beginPath();g.moveTo(0,128);g.lineTo(128,0);g.lineTo(128,128);g.fill()}else if(type==='fairing'){g.fillStyle='#e2e8f0';g.fillRect(0,0,128,128)}else if(type==='rcs'){g.fillStyle='#64748b';g.fillRect(0,0,128,128);g.fillStyle='#fde047';g.beginPath();g.arc(64,64,18,0,Math.PI*2);g.fill()}return new THREE.CanvasTexture(c)}
 function partHeight(t){return t==='fuel_engine'?GRID*2:GRID}
 function geom(t){const h=partHeight(t),s=GRID;let x;if(t==='command')x=new THREE.ConeGeometry(s/2,h,18);else if(t==='fuel'||t==='fuel_engine'||t.startsWith('decoupler'))x=new THREE.CylinderGeometry(s/2,s/2,h,18);else if(t==='fairing')x=new THREE.CylinderGeometry(s/3,s/2,h,18);else if(t==='fin'){x=new THREE.BoxGeometry(s*.25,h,s);x.translate(s*.375,0,0)}else x=new THREE.BoxGeometry(s,h,s);x.translate(0,h/2,0);return x}
@@ -138,8 +145,8 @@ function init3D(){scene=new THREE.Scene();scene.background=new THREE.Color(0x0f1
 function updateCamera(){camera.position.set(target.x+cameraRadius*Math.sin(cameraPhi)*Math.sin(cameraTheta),target.y+cameraRadius*Math.cos(cameraPhi),target.z+cameraRadius*Math.sin(cameraPhi)*Math.cos(cameraTheta));camera.lookAt(target)}
 function screenRay(x,y){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);return raycaster.intersectObjects(intersectables,true)}
 function snap(hit){const p=hit.point.clone().add(hit.face.normal.clone().multiplyScalar(.001)),n=hit.face.normal;let x=Math.round(p.x/GRID)*GRID,z=Math.round(p.z/GRID)*GRID,y=Math.floor(p.y/GRID)*GRID;if(hit.object!==plane){if(n.y>.5)y=Math.round((hit.object.position.y+partHeight(hit.object.userData.type))/GRID)*GRID;else if(Math.abs(n.x)>.5||Math.abs(n.z)>.5){x=Math.round((hit.object.position.x+n.x*GRID)/GRID)*GRID;z=Math.round((hit.object.position.z+n.z*GRID)/GRID)*GRID;y=Math.round(hit.object.position.y/GRID)*GRID}}return{x,y,z}}
-function place(x,y){const hits=screenRay(x,y);if(!hits.length)return;const p=snap(hits[0]);const m=meshFor(currentPart);m.position.set(p.x,p.y,p.z);scene.add(m);placedParts.push(m);intersectables.push(m)}
-function clearBuild(){placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);toast('組み立てをリセットしました')}
+function place(x,y){const hits=screenRay(x,y);if(!hits.length)return;const p=snap(hits[0]);const m=meshFor(currentPart);m.position.set(p.x,p.y,p.z);scene.add(m);placedParts.push(m);intersectables.push(m);updateBuilderCoach()}
+function clearBuild(){placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);toast('組み立てをリセットしました');updateBuilderCoach()}
 function animateBuild(){if(mode!=='BUILD')return;animationFrameId=requestAnimationFrame(animateBuild);renderer.render(scene,camera)}
 let pointers=new Map(),gestureStartDist=0,gestureStartRadius=0,drag=false,last={x:0,y:0},twoFingerUsed=false,lastMid=null;
 function bindBuildGestures(){
@@ -154,6 +161,18 @@ function bindBuildGestures(){
  renderer.domElement.addEventListener('pointerup',e=>{if(mode!=='BUILD')return;const wasSingle=pointers.size===1;pointers.delete(e.pointerId);if(wasSingle&&!drag&&!twoFingerUsed)place(e.clientX,e.clientY);if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}else if(pointers.size===1){const a=[...pointers.values()][0];last={x:a.x,y:a.y};drag=true}});
  renderer.domElement.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}});
  renderer.domElement.addEventListener('wheel',e=>{if(mode!=='BUILD')return;e.preventDefault();cameraRadius=Math.max(.8,Math.min(12,cameraRadius+e.deltaY*.003));updateCamera()},{passive:false})
+}
+function buildCounts(){const c={};placedParts.forEach(p=>c[p.userData.type]=(c[p.userData.type]||0)+1);return c}
+function buildEstimate(c){const dry=500+(c.command||0)*350+(c.body_block||0)*300+(c.fuel_engine||0)*500+(c.fairing||0)*120+(c.rcs||0)*80+(c.landing_gear||0)*120+(c.satellite||0)*250+(c.fin||0)*50+Object.keys(c).filter(k=>k.startsWith('decoupler')).reduce((a,k)=>a+c[k]*60,0);const fuel=(c.fuel||0)*1200+(c.fuel_engine||0)*1800;return{dry,fuel,total:dry+fuel}}
+function coachButton(type,label){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>selectPart(type);return b}
+function updateBuilderCoach(selectedType){const msg=$('coach-message'),st=$('coach-status'),next=$('coach-next');if(!msg||!st||!next)return;const c=buildCounts(),e=buildEstimate(c),parts=placedParts.length;next.innerHTML='';$('coach-parts').textContent=parts+'個';$('coach-mass').textContent=e.total.toLocaleString()+' kg';const hasCmd=!!c.command,hasEng=!!c.fuel_engine,hasFuel=(c.fuel||0)+(c.fuel_engine||0)>0,hasSep=Object.keys(c).some(k=>k.startsWith('decoupler')&&c[k]>0);let text='',status='',recommend=[];
+ if(!hasCmd){status='STEP 1';text='まずは<b>司令船</b>を1つ置こう。ロケットの頭・司令室になる必須パーツです。';recommend=[['command','① 司令船を選ぶ']];}
+ else if(!hasEng){status='STEP 2';text='司令船OK！ 次は<b>燃料+エンジン</b>。ロケットを加速させる心臓部で、発射には必須です。';recommend=[['fuel_engine','② エンジンを置く']];}
+ else if((c.fuel||0)<1){status='STEP 3';text='発射できる最低条件はそろいました。次は<b>燃料タンク</b>を足して、どれだけ速度を変えられるか考えよう。燃料は増えるほど有利ですが、重さも増えます。';recommend=[['fuel','③ 燃料を追加']];}
+ else if(!hasSep){status='STEP 4';text='いい形です。自由研究なら<b>第1分離</b>を入れると「使い終わった部分を捨てて軽くする」多段式ロケットを試せます。';recommend=[['decoupler1','④ 第1分離を入れる'],['satellite','人工衛星を載せる']];}
+ else {status='研究OK';text='<b>研究できる機体になりました。</b> 次は「この機体で太陽研究へ」で、機体の重さ・燃料・段数をツィオルコフスキーの式につなげて比較できます。変える条件は1回に1つがおすすめ。';recommend=[['rcs','姿勢制御を追加'],['satellite','人工衛星を追加']];}
+ if(selectedType&&PART_INFO[selectedType]){const i=PART_INFO[selectedType];text+='<br><span style="color:#94a3b8">選択中：<b>'+i[0]+'</b> — '+i[1]+'</span>';}
+ st.textContent=status;$('coach-ready').textContent=(hasCmd&&hasEng)?(hasSep?'研究OK':'発射OK'):'未完';msg.innerHTML=text;recommend.forEach(r=>next.appendChild(coachButton(r[0],r[1])));
 }
 function saveRocketForResearch(){
   if(!placedParts.length){toast('⚠️ 研究に使うロケットを組み立ててください');return false}
@@ -186,7 +205,7 @@ $('guide-open').onclick=()=>$('guide-modal').classList.add('show');
 $('guide-close').onclick=()=>$('guide-modal').classList.remove('show');
 $('guide-modal').addEventListener('click',e=>{if(e.target===$('guide-modal'))$('guide-modal').classList.remove('show')});
 const boot=$('boot-status');if(boot){boot.textContent='✅ 起動OK — スマホ / PC 共通版';setTimeout(()=>boot.style.display='none',900)}
-buildPartButtons();init3D();bindBuildGestures();bindGlobal();updateBodyPositions();
+buildPartButtons();init3D();bindBuildGestures();bindGlobal();updateBodyPositions();updateBuilderCoach();
 setTimeout(()=>{if(!sessionStorage.getItem('rocketGuideSeen')){$('guide-modal').classList.add('show');sessionStorage.setItem('rocketGuideSeen','1')}},250);
 })();
 }
