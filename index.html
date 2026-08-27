@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
 <meta name="theme-color" content="#020617" />
-<title>Multi Fleet Rocket Simulator</title>
+<title>火星探査・軌道研究シミュレーター｜自由研究</title>
 <style>
 :root{
   --bg:#020617;--panel:rgba(2,6,23,.92);--line:#334155;--text:#f8fafc;--muted:#94a3b8;
@@ -15,7 +15,7 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);c
 button{font:inherit}
 .hidden{display:none!important}
 #build-ui{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:30;width:min(270px,calc(100vw - 20px));max-height:calc(100vh - 80px);overflow:auto;background:var(--panel);border:1px solid #1e3a8a;border-radius:14px;padding:12px;box-shadow:0 8px 28px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
-#build-ui h1{margin:0 0 9px;font-size:16px;color:#7dd3fc}.build-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.build-title-row h1{margin:0!important}.panel-toggle{width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:10px!important;background:#0f172a!important;border:1px solid #38bdf8!important;color:#bae6fd!important}.gesture-strip{margin:7px 0 9px;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.gesture-chip{padding:6px 5px;border-radius:8px;background:#0f172a;border:1px solid #334155;text-align:center;font-size:9px;color:#cbd5e1;line-height:1.35}.gesture-chip b{color:#7dd3fc;display:block;font-size:10px}.builder-coach{margin:7px 0 9px;padding:9px;border-radius:10px;background:#071a2b;border:1px solid #0ea5e9}.coach-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}.coach-title{font-weight:900;color:#7dd3fc;font-size:11px}.coach-status{font-size:9px;padding:3px 7px;border-radius:999px;background:#172033;border:1px solid #334155;color:#cbd5e1}.coach-message{font-size:10px;line-height:1.5;color:#e2e8f0}.coach-message b{color:#fff}.coach-next{display:flex;gap:5px;align-items:center;margin-top:7px;flex-wrap:wrap}.coach-next button{width:auto!important;min-height:30px!important;padding:5px 8px!important;font-size:9px!important;background:#075985!important;border-color:#0ea5e9!important}.coach-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:7px}.coach-stat{padding:5px;border-radius:7px;background:#0f172a;border:1px solid #26364d;text-align:center;font-size:8px;color:#94a3b8}.coach-stat b{display:block;color:#f8fafc;font-size:10px;margin-top:2px}.builder-collapsed .builder-grid,.builder-collapsed .sep,.builder-collapsed .builder-actions,.builder-collapsed .hint,.builder-collapsed .gesture-strip,.builder-collapsed .builder-coach{display:none}.builder-collapsed{width:auto!important;max-height:none!important}.builder-collapsed .build-title-row{min-width:190px}
+#build-ui h1{margin:0 0 9px;font-size:16px;color:#7dd3fc}.build-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.build-title-row h1{margin:0!important}.panel-toggle{width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:10px!important;background:#0f172a!important;border:1px solid #38bdf8!important;color:#bae6fd!important}.gesture-strip{margin:7px 0 9px;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.gesture-chip{padding:6px 5px;border-radius:8px;background:#0f172a;border:1px solid #334155;text-align:center;font-size:9px;color:#cbd5e1;line-height:1.35}.gesture-chip b{color:#7dd3fc;display:block;font-size:10px}.builder-coach{margin:7px 0 9px;padding:9px;border-radius:10px;background:#071a2b;border:1px solid #0ea5e9}.coach-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}.coach-title{font-weight:900;color:#7dd3fc;font-size:11px}.coach-status{font-size:9px;padding:3px 7px;border-radius:999px;background:#172033;border:1px solid #334155;color:#cbd5e1}.coach-message{font-size:10px;line-height:1.5;color:#e2e8f0}.coach-message b{color:#fff}.coach-next{display:flex;gap:5px;align-items:center;margin-top:7px;flex-wrap:wrap}.coach-next button{width:auto!important;min-height:30px!important;padding:5px 8px!important;font-size:9px!important;background:#075985!important;border-color:#0ea5e9!important}.coach-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:7px}.coach-stat{padding:5px;border-radius:7px;background:#0f172a;border:1px solid #26364d;text-align:center;font-size:8px;color:#94a3b8}.coach-stat b{display:block;color:#f8fafc;font-size:10px;margin-top:2px}.edit-toolbar{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:5px;margin:7px 0 9px}.edit-toolbar button{min-height:36px;padding:7px 6px;border-radius:8px;border:1px solid #475569;background:#172033;color:#fff;font-size:10px;font-weight:800}.edit-toolbar .delete-part{background:#7f1d1d;border-color:#ef4444}.edit-toolbar .undo-part{background:#334155}.edit-toolbar .selected-info{grid-column:1/-1;padding:6px 8px;border-radius:8px;border:1px solid #0ea5e9;background:#071a2b;color:#bae6fd;font-size:9px;line-height:1.4}.builder-collapsed .builder-grid,.builder-collapsed .sep,.builder-collapsed .builder-actions,.builder-collapsed .hint,.builder-collapsed .gesture-strip,.builder-collapsed .builder-coach,.builder-collapsed .edit-toolbar{display:none}.builder-collapsed{width:auto!important;max-height:none!important}.builder-collapsed .build-title-row{min-width:190px}
 #build-ui .hint{font-size:10px;color:var(--muted);margin:0 0 8px;line-height:1.45}
 .builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.builder-grid button,.builder-actions button,.top-btn,.hud-btn,.dpad button{border:1px solid #475569;background:#172033;color:#fff;border-radius:8px;cursor:pointer;font-weight:700}
 .builder-grid button{padding:8px 6px;font-size:10px;min-height:38px}.builder-grid button.active{background:#c2410c;border-color:#fb923c;box-shadow:0 0 10px rgba(249,115,22,.35)}
@@ -41,12 +41,46 @@ button{font:inherit}
  #fleet-hud{left:6px;right:6px;top:auto;bottom:max(6px,env(safe-area-inset-bottom));width:auto;height:42vh;display:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;align-items:stretch}.ship-panel{min-width:225px;max-width:225px;height:max-content}.dpad{width:108px}.dpad button{height:30px}
  #global-controls{top:max(6px,env(safe-area-inset-top));right:6px;width:auto;max-width:190px}.top-btn{font-size:9px;padding:7px}#guide-open{top:max(8px,env(safe-area-inset-top));right:8px;padding:8px 10px;font-size:10px}#boot-status{top:12%}
 }
+
+/* ===== Device selector / usability profiles ===== */
+#device-choice{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 15%,#10213b 0,#020617 55%,#000 100%);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto;touch-action:pan-y}
+.device-card{width:min(760px,100%);background:rgba(2,6,23,.97);border:1px solid #334155;border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+.device-card h2{margin:0 0 6px;color:#e0f2fe;font-size:clamp(20px,4vw,30px)}.device-card>p{margin:0 0 16px;color:#94a3b8;font-size:13px;line-height:1.6}
+.device-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.device-option{min-height:170px;border:1px solid #475569;border-radius:15px;background:#0f172a;color:#fff;padding:16px;text-align:left;cursor:pointer}.device-option b{display:block;font-size:19px;color:#7dd3fc;margin-bottom:8px}.device-option span{display:block;color:#cbd5e1;font-size:12px;line-height:1.55}.device-option small{display:block;color:#64748b;margin-top:10px;line-height:1.45}.device-auto{margin-top:12px;padding:10px;border-radius:10px;background:#071a2b;border:1px solid #0ea5e9;color:#bae6fd;font-size:11px;line-height:1.5}
+#device-switch{position:fixed;z-index:72;top:max(54px,calc(env(safe-area-inset-top) + 44px));right:max(10px,env(safe-area-inset-right));border:1px solid #475569;background:rgba(2,6,23,.9);color:#cbd5e1;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800}
+body.device-desktop #build-ui{top:max(12px,env(safe-area-inset-top));bottom:auto;left:max(12px,env(safe-area-inset-left));right:auto;width:330px;max-height:calc(100vh - 24px);padding:13px}
+body.device-desktop .builder-grid{grid-template-columns:1fr 1fr}body.device-desktop .builder-grid button{min-height:40px;font-size:10px}
+body.device-desktop .gesture-strip{grid-template-columns:repeat(2,1fr)}body.device-desktop #build-help{top:auto;bottom:max(10px,env(safe-area-inset-bottom))}
+body.device-desktop #fleet-hud{left:max(10px,env(safe-area-inset-left));right:auto;top:max(10px,env(safe-area-inset-top));bottom:max(10px,env(safe-area-inset-bottom));width:280px;height:auto;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+body.device-mobile #build-ui{top:auto!important;left:8px!important;right:8px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;padding:9px!important}
+body.device-mobile .builder-grid{grid-template-columns:repeat(3,1fr)!important}body.device-mobile .builder-grid button{font-size:10px!important;min-height:44px!important;padding:7px 4px!important}
+body.device-mobile .edit-toolbar button,body.device-mobile .builder-actions button{min-height:46px!important}body.device-mobile .gesture-strip{grid-template-columns:repeat(2,1fr)}
+body.device-mobile #build-help{top:max(8px,env(safe-area-inset-top))!important;bottom:auto!important;font-size:9px}body.device-mobile #fleet-hud{left:6px!important;right:6px!important;top:auto!important;bottom:max(6px,env(safe-area-inset-bottom))!important;width:auto!important;height:42vh!important;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important}
+body.device-mobile .ship-panel{min-width:235px;max-width:235px}body.device-mobile .dpad button{min-height:38px}
+body.device-mobile #panel-toggle{min-height:38px!important}.mobile-focus-tip{display:none}
+body.device-mobile .mobile-focus-tip{display:block;margin:6px 0;padding:7px 8px;border-radius:8px;background:#172554;border:1px solid #1d4ed8;color:#dbeafe;font-size:9px;line-height:1.45}
+@media(max-width:560px){.device-options{grid-template-columns:1fr}.device-option{min-height:145px}.device-card{padding:15px}}
+
 </style>
 </head>
 <body>
-<noscript><div id="no-script">この画面ではJavaScriptが実行されていません。<br>ゲームを遊ぶには、GitHub PagesなどのWebページとしてSafari / Chromeで開いてください。</div></noscript>
+
+<div id="device-choice">
+  <div class="device-card">
+    <h2>🚀 火星探査・軌道研究シミュレーター</h2>
+    <p>最初に操作する機器を選んでください。同じ研究データを使いますが、操作盤とジェスチャーをそれぞれ使いやすく最適化します。</p>
+    <div class="device-options">
+      <button type="button" class="device-option" data-device="desktop"><b>🖥️ パソコン版</b><span>マウスで正確に組み立て。ドラッグ＝視点回転、ホイール＝ズーム。フライトは矢印キー＋Spaceにも対応。</span><small>おすすめ：細かい機体設計、複数機の比較、学校のPC。</small></button>
+      <button type="button" class="device-option" data-device="mobile"><b>📱 スマホ版</b><span>大きなボタンと下部操作盤。1本指＝回転、2本指＝画面移動、ピンチ＝ズーム。配置済みパーツはタップ→ドラッグ。</span><small>おすすめ：iPhone / Android、友だちにQRで体験してもらう時。</small></button>
+    </div>
+    <div class="device-auto" id="device-auto">💡 端末を自動判定しています。選んだ版はいつでも右上から変更できます。</div>
+  </div>
+</div>
+<button id="device-switch" type="button" class="hidden">🖥️/📱 版を変更</button>
+
+<noscript><div id="no-script">この画面ではJavaScriptが実行されていません。<br>シミュレーターを使うには、GitHub PagesなどのWebページとしてSafari / Chromeで開いてください。</div></noscript>
 <div id="boot-status">🚀 起動チェック中… 3Dエンジンを読み込んでいます</div>
-<button id="guide-open" type="button">？ 遊び方</button>
+<button id="guide-open" type="button">？ 使い方</button>
 <div id="guide-modal">
   <div class="guide-card">
     <h2>🚀 はじめかた</h2>
@@ -59,35 +93,42 @@ button{font:inherit}
       <div class="guide-step"><div class="guide-num">5</div><div><b>2〜5号機を追加</b><span>「🔧 次の機体を組み立てる」でビルダーへ戻ります。宇宙にいる機体は残ったまま、次の号機を作って追加発射できます。</span></div></div>
       <div class="guide-step"><div class="guide-num">6</div><div><b>ミッション終了・自爆</b><span>「💥 自爆」→確認→爆発。機体はLOSTとなり、デブリが四散します。号機番号は途中で消えてもズレません。</span></div></div>
     </div>
-    <div class="guide-tip">☀️ <b>自由研究：</b>組み立てた機体は「この機体で太陽研究へ」から、ケプラーの法則・ツィオルコフスキーの実験条件に引き継げます。<br><br>💡 最初のおすすめ：司令船 → 燃料タンク → 第1分離 → 燃料+エンジンの順に縦へ重ねて、まず1号機を発射してみてください。</div>
-    <button class="guide-close" id="guide-close" type="button">ゲームを始める</button>
-    <div class="guide-mini">いつでも右上の「？ 遊び方」から開き直せます</div>
+    <div class="guide-tip">🔴 <b>自由研究：</b>組み立てた機体は「この機体で火星研究へ」から、ケプラーの法則・ツィオルコフスキーのロケット方程式・火星への遷移軌道の実験条件に引き継げます。<br><br>💡 最初のおすすめ：司令船 → 燃料タンク → 第1分離 → 燃料+エンジンの順に縦へ重ねて、まず1号機を発射してみてください。</div>
+    <button class="guide-close" id="guide-close" type="button">研究を始める</button>
+    <div class="guide-mini">いつでも右上の「？ 使い方」から開き直せます</div>
   </div>
 </div>
 <div id="build-ui">
   <div class="build-title-row"><h1>🚀 ロケットビルダー</h1><button id="panel-toggle" class="panel-toggle" type="button">▼ 小さくする</button></div>
   <p class="hint">スマホは画面を直接動かせます。パーツ配置は短くタップ。</p>
-  <div class="gesture-strip"><div class="gesture-chip"><b>☝️ 1本指</b>ドラッグ＝回転</div><div class="gesture-chip"><b>✌️ 2本指</b>ドラッグ＝画面移動</div><div class="gesture-chip"><b>🤏 ピンチ</b>拡大・縮小</div><div class="gesture-chip"><b>👆 タップ</b>パーツ配置</div></div>
+  <div class="mobile-focus-tip">📱 スマホのコツ：ロケットを見る場所を広くしたい時は「▼ 小さくする」。パーツを動かす時はパーツを一度タップして青くしてからドラッグ。</div>
+  <div class="gesture-strip"><div class="gesture-chip"><b>☝️ 空白を1本指</b>ドラッグ＝回転</div><div class="gesture-chip"><b>✌️ 2本指</b>ドラッグ＝画面移動</div><div class="gesture-chip"><b>🤏 ピンチ</b>拡大・縮小</div><div class="gesture-chip"><b>🧩 パーツを触る</b>選択・ドラッグ移動</div></div>
   <div class="builder-coach" id="builder-coach">
     <div class="coach-head"><div class="coach-title">🧑‍🚀 組み立てコーチ</div><div class="coach-status" id="coach-status">STEP 1</div></div>
     <div class="coach-message" id="coach-message">まずは<b>司令船</b>を1つ置こう。ロケットの頭・司令室になる必須パーツです。</div>
     <div class="coach-next" id="coach-next"></div>
     <div class="coach-stats"><div class="coach-stat">パーツ<b id="coach-parts">0個</b></div><div class="coach-stat">推定質量<b id="coach-mass">0 kg</b></div><div class="coach-stat">研究準備<b id="coach-ready">未完</b></div></div>
   </div>
+  <div class="edit-toolbar" id="edit-toolbar">
+    <button type="button" id="edit-mode-btn">✋ 配置済みパーツを選択</button>
+    <button type="button" class="undo-part" id="undo-btn">↩︎ 1つ戻す</button>
+    <button type="button" class="delete-part" id="delete-selected-btn">🗑 削除</button>
+    <div class="selected-info" id="selected-info">選択なし：配置済みパーツをタップすると、青く光ります。ドラッグすると別の位置へ移動できます。</div>
+  </div>
   <div class="builder-grid" id="part-buttons"></div>
   <div class="sep"></div>
   <div class="builder-actions">
     <button class="launch" id="launch-btn">🚀 この機体を発射</button>
-    <button id="research-from-builder" style="background:#7c3aed;border-color:#8b5cf6">☀️ この機体で太陽研究へ</button>
+    <button id="research-from-builder" style="background:#7c3aed;border-color:#8b5cf6">🔴 この機体で火星研究へ</button>
     <button class="reset" id="reset-btn">🗑 組み立てをリセット</button>
   </div>
 </div>
 <div id="build-help">最大5号機まで運用 / フライト中も「機体を組み立てる」で追加発射できます</div>
-<div id="launch-overlay"><h2>IGNITION — LIFTOFF</h2><p>大気圏を突破し、太陽系軌道へ投入中…</p></div>
+<div id="launch-overlay"><h2>IGNITION — LIFTOFF</h2><p>大気圏を突破し、火星へ向かう軌道を準備中…</p></div>
 <canvas id="flight-canvas"></canvas>
 <div id="global-controls">
   <button class="top-btn overview" id="overview-btn">🪐 全体ビュー</button>
-  <button class="top-btn" id="research-btn" style="background:#7c3aed">☀️ 太陽研究モード</button>
+  <button class="top-btn" id="research-btn" style="background:#7c3aed">🔴 火星研究モード</button>
   <button class="top-btn builder-return" id="return-btn">🔧 次の機体を組み立てる</button>
 </div>
 <div id="fleet-hud"></div>
@@ -104,6 +145,13 @@ if(typeof THREE==='undefined'){
 }else{
 (() => {
 'use strict';
+
+let deviceMode=null;
+function guessedDevice(){return (matchMedia('(pointer:coarse)').matches || innerWidth<760)?'mobile':'desktop'}
+function applyDeviceMode(mode,announce=true){deviceMode=mode==='desktop'?'desktop':'mobile';document.body.classList.remove('device-desktop','device-mobile');document.body.classList.add('device-'+deviceMode);try{localStorage.setItem('rocketDeviceMode',deviceMode)}catch(e){}const sw=document.getElementById('device-switch');if(sw){sw.classList.remove('hidden');sw.textContent=deviceMode==='mobile'?'📱 スマホ版':'🖥️ PC版'}const hint=document.querySelector('#build-ui .hint');if(hint)hint.textContent=deviceMode==='mobile'?'スマホ：1本指＝回転 / 2本指＝移動 / ピンチ＝ズーム / パーツをドラッグ＝移動':'PC：左ドラッグ＝視点回転 / ホイール＝ズーム / クリック＝配置 / 配置済みパーツをドラッグ＝移動';resize();if(announce&&typeof toast==='function')toast(deviceMode==='mobile'?'📱 スマホ操作に切替':'🖥️ PC操作に切替')}
+function openDeviceChoice(){const el=document.getElementById('device-choice');if(el)el.style.display='flex'}
+function closeDeviceChoice(){const el=document.getElementById('device-choice');if(el)el.style.display='none'}
+function initDeviceChoice(){const auto=guessedDevice();const a=document.getElementById('device-auto');if(a)a.textContent='💡 この端末のおすすめは「'+(auto==='mobile'?'スマホ版':'パソコン版')+'」です。自分で変更しても大丈夫です。';document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>{applyDeviceMode(b.dataset.device,false);closeDeviceChoice();const g=document.getElementById('guide-modal');if(g)g.classList.add('show')}));const sw=document.getElementById('device-switch');if(sw)sw.addEventListener('click',openDeviceChoice);let saved=null,fromQuery=null;try{fromQuery=new URLSearchParams(location.search).get('device');saved=localStorage.getItem('rocketDeviceMode')}catch(e){}const chosen=(fromQuery==='mobile'||fromQuery==='desktop')?fromQuery:saved;if(chosen){applyDeviceMode(chosen,false);closeDeviceChoice()}else{document.body.classList.add('device-'+auto)}}
 const MAX_SHIPS=5, GRID=.5, SUB_STEPS=160;
 const COLORS=['#f97316','#38bdf8','#10b981','#ec4899','#eab308'];
 const PARTS=[
@@ -111,10 +159,11 @@ const PARTS=[
  ['decoupler1','🔴 第1分離'],['decoupler2','🟠 第2分離'],['decoupler3','🟡 第3分離'],['decoupler4','🟢 第4分離'],['decoupler5','🔵 第5分離'],
  ['rcs','姿勢制御'],['landing_gear','着陸脚'],['satellite','人工衛星'],['fin','安定翼']
 ];
-const PART_INFO={command:['司令船','ロケットの頭・司令室。発射には必須。'],body_block:['本体ブロック','機体を長くしたり形を整える。増やしすぎると重くなる。'],fuel:['燃料タンク','燃料が増えて長く加速できるが、その燃料自体も重い。'],fuel_engine:['燃料+エンジン','推進力を生む必須パーツ。まず1基置こう。'],fairing:['フェアリング','衛星などを空気から守るカバー。宇宙では不要になれば外す。'],decoupler1:['第1分離','使い終わった下段を捨てて軽くする。多段式の考え方につながる。'],decoupler2:['第2分離','さらに上段を分離する。段を増やすと設計が複雑になる。'],decoupler3:['第3分離','上級者向けの多段化。'],decoupler4:['第4分離','上級者向けの多段化。'],decoupler5:['第5分離','最上段分離。必要なときだけ使う。'],rcs:['姿勢制御','宇宙で向きを変える補助スラスタ。'],landing_gear:['着陸脚','着陸ミッション向け。太陽探査だけなら優先度は低い。'],satellite:['人工衛星','軌道へ投入する目的物。'],fin:['安定翼','大気中で姿勢を安定させる。宇宙ではほぼ働かない。']};
+const PART_INFO={command:['司令船','ロケットの頭・司令室。発射には必須。'],body_block:['本体ブロック','機体を長くしたり形を整える。増やしすぎると重くなる。'],fuel:['燃料タンク','燃料が増えて長く加速できるが、その燃料自体も重い。'],fuel_engine:['燃料+エンジン','推進力を生む必須パーツ。まず1基置こう。'],fairing:['フェアリング','衛星などを空気から守るカバー。宇宙では不要になれば外す。'],decoupler1:['第1分離','使い終わった下段を捨てて軽くする。多段式の考え方につながる。'],decoupler2:['第2分離','さらに上段を分離する。段を増やすと設計が複雑になる。'],decoupler3:['第3分離','上級者向けの多段化。'],decoupler4:['第4分離','上級者向けの多段化。'],decoupler5:['第5分離','最上段分離。必要なときだけ使う。'],rcs:['姿勢制御','宇宙で向きを変える補助スラスタ。'],landing_gear:['着陸脚','火星着陸を考えるなら重要。軌道研究だけなら必須ではない。'],satellite:['人工衛星','軌道へ投入する目的物。'],fin:['安定翼','大気中で姿勢を安定させる。宇宙ではほぼ働かない。']};
 let mode='BUILD', scene,camera,renderer,raycaster,mouse,plane,previewMesh;
 let cameraRadius=3.5,cameraTheta=Math.PI/4,cameraPhi=Math.PI/3;
 const target=new THREE.Vector3(0,1,0), placedParts=[], intersectables=[], textures={};
+let selectedPlaced=null, movingPlaced=null, moveStartPos=null, historyStack=[];
 let animationFrameId=null, flightFrameId=null;
 const canvas=document.getElementById('flight-canvas'),ctx=canvas.getContext('2d');
 let ships=[], debris=[], explosions=[], overview=false, followShipId=null, nextShipNumber=1, pendingDestructId=null;
@@ -145,21 +194,26 @@ function init3D(){scene=new THREE.Scene();scene.background=new THREE.Color(0x0f1
 function updateCamera(){camera.position.set(target.x+cameraRadius*Math.sin(cameraPhi)*Math.sin(cameraTheta),target.y+cameraRadius*Math.cos(cameraPhi),target.z+cameraRadius*Math.sin(cameraPhi)*Math.cos(cameraTheta));camera.lookAt(target)}
 function screenRay(x,y){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);return raycaster.intersectObjects(intersectables,true)}
 function snap(hit){const p=hit.point.clone().add(hit.face.normal.clone().multiplyScalar(.001)),n=hit.face.normal;let x=Math.round(p.x/GRID)*GRID,z=Math.round(p.z/GRID)*GRID,y=Math.floor(p.y/GRID)*GRID;if(hit.object!==plane){if(n.y>.5)y=Math.round((hit.object.position.y+partHeight(hit.object.userData.type))/GRID)*GRID;else if(Math.abs(n.x)>.5||Math.abs(n.z)>.5){x=Math.round((hit.object.position.x+n.x*GRID)/GRID)*GRID;z=Math.round((hit.object.position.z+n.z*GRID)/GRID)*GRID;y=Math.round(hit.object.position.y/GRID)*GRID}}return{x,y,z}}
-function place(x,y){const hits=screenRay(x,y);if(!hits.length)return;const p=snap(hits[0]);const m=meshFor(currentPart);m.position.set(p.x,p.y,p.z);scene.add(m);placedParts.push(m);intersectables.push(m);updateBuilderCoach()}
-function clearBuild(){placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);toast('組み立てをリセットしました');updateBuilderCoach()}
+function snapshotBuild(){return placedParts.map(p=>({type:p.userData.type,x:p.position.x,y:p.position.y,z:p.position.z}))}
+function pushHistory(){historyStack.push(snapshotBuild());if(historyStack.length>30)historyStack.shift()}
+function restoreBuild(snap){placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);snap.forEach(v=>{const m=meshFor(v.type);m.position.set(v.x,v.y,v.z);scene.add(m);placedParts.push(m);intersectables.push(m)});selectPlaced(null);updateBuilderCoach()}
+function undoBuild(){if(!historyStack.length){toast('↩︎ 戻せる操作がありません');return}restoreBuild(historyStack.pop());toast('↩︎ 1つ前に戻しました')}
+function partHit(x,y){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);return raycaster.intersectObjects(placedParts,true)[0]||null}
+function selectPlaced(m){if(selectedPlaced&&selectedPlaced.material){selectedPlaced.material.emissive&&selectedPlaced.material.emissive.setHex(0x000000);selectedPlaced.material.emissiveIntensity=0}selectedPlaced=m||null;const info=$('selected-info');if(selectedPlaced&&selectedPlaced.material){if(selectedPlaced.material.emissive){selectedPlaced.material.emissive.setHex(0x0ea5e9);selectedPlaced.material.emissiveIntensity=.55}const i=PART_INFO[selectedPlaced.userData.type]||[selectedPlaced.userData.type,''];info.innerHTML='選択中：<b>'+i[0]+'</b>　📍('+selectedPlaced.position.x.toFixed(1)+', '+selectedPlaced.position.y.toFixed(1)+', '+selectedPlaced.position.z.toFixed(1)+')<br>そのままドラッグで移動 ／ 「削除」で外せます。'}else if(info){info.textContent='選択なし：配置済みパーツをタップすると、青く光ります。ドラッグすると別の位置へ移動できます。'}}
+function deleteSelected(){if(!selectedPlaced){toast('削除するパーツを先に選んでください');return}pushHistory();const m=selectedPlaced;scene.remove(m);const i=placedParts.indexOf(m);if(i>=0)placedParts.splice(i,1);const j=intersectables.indexOf(m);if(j>=0)intersectables.splice(j,1);selectPlaced(null);updateBuilderCoach();toast('🗑 パーツを削除しました')}
+function dragTarget(x,y,m){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);const targets=intersectables.filter(o=>o!==m);const hits=raycaster.intersectObjects(targets,true);if(!hits.length)return null;return snap(hits[0])}
+function place(x,y){const hits=screenRay(x,y);if(!hits.length)return;pushHistory();const p=snap(hits[0]);const m=meshFor(currentPart);m.position.set(p.x,p.y,p.z);scene.add(m);placedParts.push(m);intersectables.push(m);selectPlaced(m);updateBuilderCoach()}
+function clearBuild(){if(placedParts.length)pushHistory();placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);selectPlaced(null);toast('組み立てをリセットしました');updateBuilderCoach()}
 function animateBuild(){if(mode!=='BUILD')return;animationFrameId=requestAnimationFrame(animateBuild);renderer.render(scene,camera)}
 let pointers=new Map(),gestureStartDist=0,gestureStartRadius=0,drag=false,last={x:0,y:0},twoFingerUsed=false,lastMid=null;
 function bindBuildGestures(){
- renderer.domElement.addEventListener('pointerdown',e=>{if(mode!=='BUILD')return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});renderer.domElement.setPointerCapture(e.pointerId);if(pointers.size===1){drag=false;twoFingerUsed=false;last={x:e.clientX,y:e.clientY}}else if(pointers.size===2){twoFingerUsed=true;const a=[...pointers.values()];gestureStartDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);gestureStartRadius=cameraRadius;lastMid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2}}});
+ renderer.domElement.addEventListener('pointerdown',e=>{if(mode!=='BUILD')return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});renderer.domElement.setPointerCapture(e.pointerId);if(pointers.size===1){drag=false;twoFingerUsed=false;last={x:e.clientX,y:e.clientY};const hit=partHit(e.clientX,e.clientY);movingPlaced=hit?hit.object:null;moveStartPos=movingPlaced?movingPlaced.position.clone():null;if(movingPlaced)selectPlaced(movingPlaced)}else if(pointers.size===2){twoFingerUsed=true;movingPlaced=null;const a=[...pointers.values()];gestureStartDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);gestureStartRadius=cameraRadius;lastMid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2}}});
  renderer.domElement.addEventListener('pointermove',e=>{if(mode!=='BUILD'||!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pointers.size===2){twoFingerUsed=true;const a=[...pointers.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};
-   if(d>10)cameraRadius=Math.max(.8,Math.min(12,gestureStartRadius*(gestureStartDist/d)));
-   if(lastMid){const dx=mid.x-lastMid.x,dy=mid.y-lastMid.y,scale=cameraRadius*.0018;const right=new THREE.Vector3();camera.getWorldDirection(right);right.cross(camera.up).normalize();const up=new THREE.Vector3(0,1,0);target.addScaledVector(right,-dx*scale);target.addScaledVector(up,dy*scale);target.x=Math.max(-6,Math.min(6,target.x));target.y=Math.max(0,Math.min(6,target.y));target.z=Math.max(-6,Math.min(6,target.z));}
-   lastMid=mid;updateCamera();return;
-  }
-  const dx=e.clientX-last.x,dy=e.clientY-last.y;if(Math.hypot(dx,dy)>4)drag=true;if(drag){cameraTheta-=dx*.005;cameraPhi=Math.max(.12,Math.min(Math.PI/2-.05,cameraPhi-dy*.005));updateCamera();last={x:e.clientX,y:e.clientY}}const hits=screenRay(e.clientX,e.clientY);if(hits.length&&previewMesh){const p=snap(hits[0]);previewMesh.position.set(p.x,p.y,p.z)}});
- renderer.domElement.addEventListener('pointerup',e=>{if(mode!=='BUILD')return;const wasSingle=pointers.size===1;pointers.delete(e.pointerId);if(wasSingle&&!drag&&!twoFingerUsed)place(e.clientX,e.clientY);if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}else if(pointers.size===1){const a=[...pointers.values()][0];last={x:a.x,y:a.y};drag=true}});
- renderer.domElement.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}});
+  if(pointers.size===2){twoFingerUsed=true;movingPlaced=null;const a=[...pointers.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};if(d>10)cameraRadius=Math.max(.8,Math.min(12,gestureStartRadius*(gestureStartDist/d)));if(lastMid){const dx=mid.x-lastMid.x,dy=mid.y-lastMid.y,scale=cameraRadius*.0018;const right=new THREE.Vector3();camera.getWorldDirection(right);right.cross(camera.up).normalize();const up=new THREE.Vector3(0,1,0);target.addScaledVector(right,-dx*scale);target.addScaledVector(up,dy*scale);target.x=Math.max(-6,Math.min(6,target.x));target.y=Math.max(0,Math.min(6,target.y));target.z=Math.max(-6,Math.min(6,target.z));}lastMid=mid;updateCamera();return;}
+  const dx=e.clientX-last.x,dy=e.clientY-last.y;if(Math.hypot(dx,dy)>4)drag=true;if(movingPlaced){if(drag){if(!movingPlaced.userData._historyPushed){pushHistory();movingPlaced.userData._historyPushed=true}const p=dragTarget(e.clientX,e.clientY,movingPlaced);if(p){movingPlaced.position.set(p.x,p.y,p.z);selectPlaced(movingPlaced)}}return;}
+  if(drag){cameraTheta-=dx*.005;cameraPhi=Math.max(.12,Math.min(Math.PI/2-.05,cameraPhi-dy*.005));updateCamera();last={x:e.clientX,y:e.clientY}}const hits=screenRay(e.clientX,e.clientY);if(hits.length&&previewMesh){const p=snap(hits[0]);previewMesh.position.set(p.x,p.y,p.z)}});
+ renderer.domElement.addEventListener('pointerup',e=>{if(mode!=='BUILD')return;const wasSingle=pointers.size===1;pointers.delete(e.pointerId);if(wasSingle&&!twoFingerUsed){if(movingPlaced){if(!drag)selectPlaced(movingPlaced);if(movingPlaced.userData)movingPlaced.userData._historyPushed=false;updateBuilderCoach()}else if(!drag){place(e.clientX,e.clientY)}}movingPlaced=null;moveStartPos=null;if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}else if(pointers.size===1){const a=[...pointers.values()][0];last={x:a.x,y:a.y};drag=true}});
+ renderer.domElement.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);movingPlaced=null;if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}});
  renderer.domElement.addEventListener('wheel',e=>{if(mode!=='BUILD')return;e.preventDefault();cameraRadius=Math.max(.8,Math.min(12,cameraRadius+e.deltaY*.003));updateCamera()},{passive:false})
 }
 function buildCounts(){const c={};placedParts.forEach(p=>c[p.userData.type]=(c[p.userData.type]||0)+1);return c}
@@ -170,7 +224,7 @@ function updateBuilderCoach(selectedType){const msg=$('coach-message'),st=$('coa
  else if(!hasEng){status='STEP 2';text='司令船OK！ 次は<b>燃料+エンジン</b>。ロケットを加速させる心臓部で、発射には必須です。';recommend=[['fuel_engine','② エンジンを置く']];}
  else if((c.fuel||0)<1){status='STEP 3';text='発射できる最低条件はそろいました。次は<b>燃料タンク</b>を足して、どれだけ速度を変えられるか考えよう。燃料は増えるほど有利ですが、重さも増えます。';recommend=[['fuel','③ 燃料を追加']];}
  else if(!hasSep){status='STEP 4';text='いい形です。自由研究なら<b>第1分離</b>を入れると「使い終わった部分を捨てて軽くする」多段式ロケットを試せます。';recommend=[['decoupler1','④ 第1分離を入れる'],['satellite','人工衛星を載せる']];}
- else {status='研究OK';text='<b>研究できる機体になりました。</b> 次は「この機体で太陽研究へ」で、機体の重さ・燃料・段数をツィオルコフスキーの式につなげて比較できます。変える条件は1回に1つがおすすめ。';recommend=[['rcs','姿勢制御を追加'],['satellite','人工衛星を追加']];}
+ else {status='研究OK';text='<b>研究できる機体になりました。</b> 次は「この機体で火星研究へ」で、機体の重さ・燃料・段数をツィオルコフスキーの式につなげ、火星へ届く条件を比較できます。変える条件は1回に1つがおすすめ。';recommend=[['rcs','姿勢制御を追加'],['satellite','人工衛星を追加']];}
  if(selectedType&&PART_INFO[selectedType]){const i=PART_INFO[selectedType];text+='<br><span style="color:#94a3b8">選択中：<b>'+i[0]+'</b> — '+i[1]+'</span>';}
  st.textContent=status;$('coach-ready').textContent=(hasCmd&&hasEng)?(hasSep?'研究OK':'発射OK'):'未完';msg.innerHTML=text;recommend.forEach(r=>next.appendChild(coachButton(r[0],r[1])));
 }
@@ -180,10 +234,10 @@ function saveRocketForResearch(){
   const dry=500+(counts.command||0)*350+(counts.body_block||0)*300+(counts.fuel_engine||0)*500+(counts.fairing||0)*120+(counts.rcs||0)*80+(counts.landing_gear||0)*120+(counts.satellite||0)*250+(counts.fin||0)*50+Object.keys(counts).filter(k=>k.startsWith('decoupler')).reduce((a,k)=>a+counts[k]*60,0);
   const fuel=(counts.fuel||0)*1200+(counts.fuel_engine||0)*1800;
   const stages=Object.keys(counts).filter(k=>k.startsWith('decoupler')&&counts[k]>0).length;
-  localStorage.setItem('solarRocketBuild',JSON.stringify({counts,dry:Math.min(3000,Math.max(200,Math.round(dry/100)*100)),fuel:Math.min(9000,Math.max(100,Math.round(fuel/100)*100)),stages,createdAt:Date.now()}));
+  localStorage.setItem('marsRocketBuild',JSON.stringify({counts,dry:Math.min(3000,Math.max(200,Math.round(dry/100)*100)),fuel:Math.min(9000,Math.max(100,Math.round(fuel/100)*100)),stages,createdAt:Date.now()}));
   return true
 }
-function goSolarResearch(){if(saveRocketForResearch())location.href='solar-research.html'}
+function goSolarResearch(){if(saveRocketForResearch())location.href='mars-research.html?device='+(deviceMode||guessedDevice())}
 function validateBuild(){if(!placedParts.length)return'ロケットのパーツを配置してください';if(!placedParts.some(p=>p.userData.type==='command'))return'司令船が必要です';if(!placedParts.some(p=>p.userData.type==='fuel_engine'))return'「燃料+エンジン」が必要です';if(nextShipNumber>MAX_SHIPS)return'1号機〜5号機はすべて使用済みです';return null}
 async function launch(){const err=validateBuild();if(err){toast('⚠️ '+err);return}saveRocketForResearch();const ov=$('launch-overlay');document.querySelectorAll('#build-ui,#build-help').forEach(x=>x.classList.add('hidden'));ov.classList.add('show');await new Promise(r=>setTimeout(r,1150));ov.classList.remove('show');spawnShip();enterFlight()}
 function spawnShip(){updateBodyPositions();const earth=bodies.find(b=>b.name==='地球'),n=nextShipNumber++,spawn=earth.angle+(n-1)*.36,r=earth.radius+65;const ex=earth.x+Math.cos(spawn)*r,ey=earth.y+Math.sin(spawn)*r,earthV=earth.orbitSpeed*earth.orbitDist,orb=Math.sqrt((earth.mass*400)/r);const s={id:'ship-'+n,number:n,name:n+'号機',color:COLORS[n-1],x:ex,y:ey,vx:-Math.sin(spawn)*(earthV+orb)*.1,vy:Math.cos(spawn)*(earthV+orb)*.1,angle:spawn+Math.PI/2,fuel:100,integrity:100,altitude:0,status:'ACTIVE',parts:placedParts.map(p=>({type:p.userData.type,x:p.position.x,y:p.position.y,z:p.position.z})),trail:[],thrust:false};ships.push(s);followShipId=s.id;clearBuild();rebuildHUD();toast('🚀 '+s.name+' 軌道投入')}
@@ -200,12 +254,12 @@ function draw(){ctx.fillStyle='#020617';ctx.fillRect(0,0,canvas.width,canvas.hei
 function updateHUD(){ships.forEach(s=>{const ve=$('vel-'+s.id),al=$('alt-'+s.id),fu=$('fuel-'+s.id),st=$('status-'+s.id);if(ve)ve.textContent=(Math.hypot(s.vx,s.vy)*120).toFixed(2)+' km/s';if(al)al.textContent=s.altitude+' km';if(fu)fu.textContent=s.fuel.toFixed(1)+' %';if(st&&s.status==='ACTIVE'){st.className=s.integrity>60?'status-ok':s.integrity>30?'status-warn':'status-bad';st.textContent=s.integrity>60?'健全':s.integrity>30?'注意':'危険'}})}
 let lastStatusKey='';function animateFlight(){if(mode!=='FLIGHT'){flightFrameId=null;return}flightFrameId=requestAnimationFrame(animateFlight);physics();const key=ships.map(s=>s.status).join('|');if(key!==lastStatusKey){lastStatusKey=key;rebuildHUD()}updateHUD();draw()}
 function resize(){if(renderer&&mode==='BUILD'){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}canvas.width=Math.floor(innerWidth*Math.min(devicePixelRatio,2));canvas.height=Math.floor(innerHeight*Math.min(devicePixelRatio,2));canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(Math.min(devicePixelRatio,2),0,0,Math.min(devicePixelRatio,2),0,0);canvas.width=innerWidth*Math.min(devicePixelRatio,2);canvas.height=innerHeight*Math.min(devicePixelRatio,2)}
-function bindGlobal(){const pt=$('panel-toggle');if(pt)pt.onclick=()=>{const ui=$('build-ui'),on=ui.classList.toggle('builder-collapsed');pt.textContent=on?'▲ 操作盤を開く':'▼ 小さくする'};$('launch-btn').onclick=launch;$('reset-btn').onclick=clearBuild;$('research-from-builder').onclick=goSolarResearch;if($('research-btn'))$('research-btn').onclick=()=>{const live=currentAlive()[0];if(live){const counts={};live.parts.forEach(p=>counts[p.type]=(counts[p.type]||0)+1);localStorage.setItem('solarRocketBuild',JSON.stringify({counts,dry:1000,fuel:3000,stages:Object.keys(counts).filter(k=>k.startsWith('decoupler')).length,createdAt:Date.now()}));location.href='solar-research.html'}else goSolarResearch()};$('return-btn').onclick=returnBuilder;$('overview-btn').onclick=()=>{overview=!overview;flightCamera.zoom=overview?.055:.25;$('overview-btn').textContent=overview?'🎯 追従ビュー':'🪐 全体ビュー'};$('confirm-cancel').onclick=()=>{$('confirm').classList.remove('show');pendingDestructId=null};$('confirm-yes').onclick=doDestruct;window.addEventListener('resize',resize);canvas.addEventListener('wheel',e=>{if(mode!=='FLIGHT')return;e.preventDefault();flightCamera.zoom*=e.deltaY>0?.9:1.1;flightCamera.zoom=Math.max(.008,Math.min(2.5,flightCamera.zoom))},{passive:false});let pinch=new Map(),startDist=0,startZoom=.25;canvas.addEventListener('pointerdown',e=>{pinch.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch.size===2){const a=[...pinch.values()];startDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);startZoom=flightCamera.zoom}});canvas.addEventListener('pointermove',e=>{if(!pinch.has(e.pointerId))return;pinch.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch.size===2){const a=[...pinch.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);flightCamera.zoom=Math.max(.008,Math.min(2.5,startZoom*(d/startDist)))}});['pointerup','pointercancel'].forEach(ev=>canvas.addEventListener(ev,e=>pinch.delete(e.pointerId)));window.addEventListener('keydown',e=>{if(mode!=='FLIGHT'||!followShipId)return;const s=shipById(followShipId);if(!s||s.status!=='ACTIVE')return;if(e.key==='ArrowLeft')s.angle-=.12;if(e.key==='ArrowRight')s.angle+=.12;if(e.key==='ArrowUp'||e.code==='Space')s.thrust=true});window.addEventListener('keyup',e=>{if(!followShipId)return;const s=shipById(followShipId);if(s&&(e.key==='ArrowUp'||e.code==='Space'))s.thrust=false})}
+function bindGlobal(){const pt=$('panel-toggle');$('delete-selected-btn').onclick=deleteSelected;$('undo-btn').onclick=undoBuild;$('edit-mode-btn').onclick=()=>{if(selectedPlaced){selectPlaced(null);toast('選択を解除しました')}else toast('配置済みパーツをタップしてください')};if(pt)pt.onclick=()=>{const ui=$('build-ui'),on=ui.classList.toggle('builder-collapsed');pt.textContent=on?'▲ 操作盤を開く':'▼ 小さくする'};$('launch-btn').onclick=launch;$('reset-btn').onclick=clearBuild;$('research-from-builder').onclick=goSolarResearch;if($('research-btn'))$('research-btn').onclick=()=>{const live=currentAlive()[0];if(live){const counts={};live.parts.forEach(p=>counts[p.type]=(counts[p.type]||0)+1);localStorage.setItem('marsRocketBuild',JSON.stringify({counts,dry:1000,fuel:3000,stages:Object.keys(counts).filter(k=>k.startsWith('decoupler')).length,createdAt:Date.now()}));location.href='mars-research.html?device='+(deviceMode||guessedDevice())}else goSolarResearch()};$('return-btn').onclick=returnBuilder;$('overview-btn').onclick=()=>{overview=!overview;flightCamera.zoom=overview?.055:.25;$('overview-btn').textContent=overview?'🎯 追従ビュー':'🪐 全体ビュー'};$('confirm-cancel').onclick=()=>{$('confirm').classList.remove('show');pendingDestructId=null};$('confirm-yes').onclick=doDestruct;window.addEventListener('resize',resize);canvas.addEventListener('wheel',e=>{if(mode!=='FLIGHT')return;e.preventDefault();flightCamera.zoom*=e.deltaY>0?.9:1.1;flightCamera.zoom=Math.max(.008,Math.min(2.5,flightCamera.zoom))},{passive:false});let pinch=new Map(),startDist=0,startZoom=.25;canvas.addEventListener('pointerdown',e=>{pinch.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch.size===2){const a=[...pinch.values()];startDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);startZoom=flightCamera.zoom}});canvas.addEventListener('pointermove',e=>{if(!pinch.has(e.pointerId))return;pinch.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch.size===2){const a=[...pinch.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);flightCamera.zoom=Math.max(.008,Math.min(2.5,startZoom*(d/startDist)))}});['pointerup','pointercancel'].forEach(ev=>canvas.addEventListener(ev,e=>pinch.delete(e.pointerId)));window.addEventListener('keydown',e=>{if(mode!=='FLIGHT'||!followShipId)return;const s=shipById(followShipId);if(!s||s.status!=='ACTIVE')return;if(e.key==='ArrowLeft')s.angle-=.12;if(e.key==='ArrowRight')s.angle+=.12;if(e.key==='ArrowUp'||e.code==='Space')s.thrust=true});window.addEventListener('keyup',e=>{if(!followShipId)return;const s=shipById(followShipId);if(s&&(e.key==='ArrowUp'||e.code==='Space'))s.thrust=false})}
 $('guide-open').onclick=()=>$('guide-modal').classList.add('show');
 $('guide-close').onclick=()=>$('guide-modal').classList.remove('show');
 $('guide-modal').addEventListener('click',e=>{if(e.target===$('guide-modal'))$('guide-modal').classList.remove('show')});
-const boot=$('boot-status');if(boot){boot.textContent='✅ 起動OK — スマホ / PC 共通版';setTimeout(()=>boot.style.display='none',900)}
-buildPartButtons();init3D();bindBuildGestures();bindGlobal();updateBodyPositions();updateBuilderCoach();
+const boot=$('boot-status');if(boot){boot.textContent='✅ 起動OK — PC / スマホ選択対応版';setTimeout(()=>boot.style.display='none',900)}
+initDeviceChoice();buildPartButtons();init3D();bindBuildGestures();bindGlobal();updateBodyPositions();updateBuilderCoach();
 setTimeout(()=>{if(!sessionStorage.getItem('rocketGuideSeen')){$('guide-modal').classList.add('show');sessionStorage.setItem('rocketGuideSeen','1')}},250);
 })();
 }
