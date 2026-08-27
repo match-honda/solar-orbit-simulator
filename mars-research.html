@@ -9,13 +9,139 @@
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{min-height:100vh}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:1260px;margin:auto;padding:12px}.top{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}.top h1{margin:0;font-size:clamp(21px,4vw,31px)}.sub{color:var(--muted);font-size:13px;line-height:1.55;max-width:820px}.mode-tools{display:flex;gap:6px;flex-wrap:wrap}.pill,.modebtn{border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:#10243b;color:#dcecff;font-size:11px;font-weight:800}.grid{display:grid;grid-template-columns:390px minmax(0,1fr);gap:12px;align-items:start}.panel,.sim,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px}.panel{padding:14px}.sim{padding:10px}.card{padding:14px;margin-top:12px}.section{font-weight:900;color:#d9efff;margin:0 0 8px;font-size:15px}.small{font-size:12px;line-height:1.6;color:var(--muted)}.callout{background:#0a2135;border-left:4px solid var(--accent);border-radius:9px;padding:10px;margin:8px 0;font-size:12px;line-height:1.65}.callout.red{border-left-color:var(--mars);background:#231612}.callout.green{border-left-color:var(--ok);background:#102019}.field{margin:10px 0}.field label{display:flex;justify-content:space-between;gap:8px;font-size:12px;margin-bottom:5px}.field select,.field input,.field textarea{width:100%;min-height:44px;border-radius:9px;border:1px solid var(--line);background:#081522;color:#fff;padding:9px}.field textarea{min-height:78px;resize:vertical}.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.actions button,.quick button{min-height:46px;border:0;border-radius:10px;font-weight:900;color:#07111f;padding:9px}.launch{background:var(--ok)}.reset{background:#dbe7f1}.record{background:var(--accent)}.compare{background:var(--warn)}canvas{width:100%;height:auto;background:#02070e;border-radius:10px;display:block}.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:8px}.metric{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:0}.metric b{display:block;color:var(--muted);font-size:10px}.metric span{display:block;font-size:14px;font-weight:900;margin-top:2px;word-break:break-word}.coach{border:2px solid var(--warn);border-radius:13px;padding:12px;background:#19180c;margin-top:9px}.coach h3{margin:0 0 6px;font-size:15px;color:#ffe49b}.coach p{font-size:12px;line-height:1.65;margin:5px 0}.coach .next{background:#11271b;border-left:4px solid var(--ok);padding:9px;border-radius:8px;margin-top:8px}.score{font-size:34px;font-weight:900;color:var(--ok)}.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#15324e;border:1px solid var(--line);font-size:11px;margin:2px}.laws{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.law{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;line-height:1.6}.law b{display:block;color:#8ddcff;margin-bottom:4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.step{background:#10243b;border-radius:10px;padding:10px;font-size:11px;line-height:1.55}.step strong{display:block;color:#ccecff;margin-bottom:4px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:760px;font-size:11px}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:center}th{background:#11233a}.review textarea{width:100%;min-height:72px;background:#081522;color:#fff;border:1px solid var(--line);border-radius:8px;padding:9px}.quick{display:none}.phasebar{height:16px;border-radius:999px;background:#09131f;border:1px solid var(--line);overflow:hidden;margin:6px 0}.phasefill{height:100%;width:0;background:linear-gradient(90deg,var(--bad),var(--warn),var(--ok));transition:width .25s}.formula{font-family:ui-monospace,Menlo,monospace;background:#07101c;border:1px solid var(--line);padding:9px;border-radius:9px;font-size:12px;overflow:auto}
 body.desktop .panel{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}body.desktop .sim{min-height:650px}body.mobile .grid{grid-template-columns:1fr}body.mobile .sim{order:1}body.mobile .panel{order:2}body.mobile .hud{grid-template-columns:1fr 1fr}body.mobile .quick{display:grid;position:sticky;bottom:6px;z-index:20;grid-template-columns:1fr 1fr;gap:6px;padding:6px;background:rgba(7,17,31,.95);border:1px solid var(--line);border-radius:11px;margin-top:8px}body.mobile .quick button:nth-child(1){background:var(--ok)}body.mobile .quick button:nth-child(2){background:var(--accent)}
 @media(max-width:860px){.grid{grid-template-columns:1fr}.laws{grid-template-columns:1fr}.steps{grid-template-columns:1fr 1fr}.panel{position:static!important;max-height:none!important}.field select,.field input,.field textarea{font-size:16px}}@media(max-width:430px){.steps{grid-template-columns:1fr}.row2{grid-template-columns:1fr}.app{padding:7px}.hud{grid-template-columns:1fr 1fr}}
+
+/* guided tutorial */
+.tutorial-overlay{position:fixed;inset:0;z-index:9999;background:rgba(2,7,14,.96);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:14px}.tutorial-overlay.hidden{display:none}.tutorial-shell{width:min(920px,100%);margin:auto;background:#0d1b2e;border:1px solid #35516f;border-radius:18px;padding:16px;box-shadow:0 18px 60px rgba(0,0,0,.45)}.tut-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}.tut-title{font-size:clamp(20px,4vw,30px);font-weight:900}.tut-progress{font-size:12px;color:#9eb1c8}.tut-bar{height:8px;background:#07111f;border:1px solid #29415f;border-radius:999px;overflow:hidden;margin:8px 0 16px}.tut-fill{height:100%;background:#5cc8ff;width:11.1%;transition:width .25s}.tut-page{display:none}.tut-page.active{display:block}.tut-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.tut-fact{background:#11233a;border:1px solid #29415f;border-radius:12px;padding:12px;line-height:1.65;font-size:13px}.tut-fact strong{display:block;color:#d9efff;margin-bottom:4px}.tut-big{font-size:clamp(22px,5vw,38px);font-weight:900;color:#5ee39b}.tut-choice{display:grid;gap:8px;margin:12px 0}.tut-choice label{display:block;background:#11233a;border:1px solid #29415f;border-radius:10px;padding:12px;cursor:pointer}.tut-choice input{margin-right:8px}.tut-ab{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tut-ab-card{background:#11233a;border:1px solid #29415f;border-radius:14px;padding:13px}.tut-ab-card h3{margin:0 0 6px}.tut-result{margin-top:10px;border-left:4px solid #5cc8ff;background:#0a2135;padding:10px;border-radius:8px;min-height:62px}.tut-result.good{border-left-color:#5ee39b;background:#102019}.tut-result.bad{border-left-color:#ff7b7b;background:#251313}.tut-actions{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap;margin-top:16px}.tut-actions button{min-height:46px;border:0;border-radius:10px;padding:10px 16px;font-weight:900}.tut-prev{background:#dbe7f1;color:#07111f}.tut-next{background:#5ee39b;color:#07111f}.tut-run{width:100%;min-height:48px;border:0;border-radius:10px;background:#ffd166;color:#07111f;font-weight:900;margin-top:8px}.tut-law{background:#10243b;border-left:4px solid #5cc8ff;border-radius:9px;padding:10px;margin:8px 0;font-size:13px;line-height:1.65}.tut-summary{background:#19180c;border:2px solid #ffd166;border-radius:12px;padding:12px;line-height:1.7}.tutorial-open{background:#7c3aed!important;border-color:#8b5cf6!important}.free-badge{display:inline-block;background:#15324e;border:1px solid #29415f;border-radius:999px;padding:5px 9px;font-size:11px;margin:2px}.locked-hint{font-size:12px;color:#ffd166;margin-top:6px}
+@media(max-width:680px){.tutorial-overlay{padding:7px}.tutorial-shell{padding:11px}.tut-grid,.tut-ab{grid-template-columns:1fr}.tut-actions{display:grid;grid-template-columns:1fr 1fr}.tut-actions button{width:100%}}
+
 </style>
 </head>
 <body>
+<div class="tutorial-overlay" id="tutorialOverlay" aria-modal="true" role="dialog" aria-label="火星探査 自由研究チュートリアル">
+  <div class="tutorial-shell">
+    <div class="tut-head"><div><div class="tut-title">🎓 火星探査 自由研究チュートリアル</div><div class="tut-progress" id="tutProgress">STEP 1 / 9　まず必要な知識</div></div><button class="modebtn" id="tutSkip">自由実験へ</button></div>
+    <div class="tut-bar"><div class="tut-fill" id="tutFill"></div></div>
+
+    <section class="tut-page active" data-step="1">
+      <h2>STEP 1｜実験前に、これだけ知っておこう</h2>
+      <p class="small">難しい式を覚える必要はありません。まず5つだけ。ここが後の実験の「ものさし」になります。</p>
+      <div class="tut-grid">
+        <div class="tut-fact"><strong>🌍 地球は止まっていない</strong><span class="tut-big">約10.7万 km/h</span><br>地球は太陽の周りを約29.8 km/sで公転。探査機もこの横向き速度を受け継いで出発します。</div>
+        <div class="tut-fact"><strong>🔴 火星は地球より外側</strong><span class="tut-big">1.524 AU</span><br>1 AU＝地球と太陽の平均距離、約1億4960万km。火星は地球より遠い軌道を回っています。</div>
+        <div class="tut-fact"><strong>⏱ 火星までは時間がかかる</strong><span class="tut-big">約259日</span><br>学習用ホーマン遷移では約8.5か月。その間にも火星は動き続けます。</div>
+        <div class="tut-fact"><strong>🟢 直線ではなく楕円</strong>地球から火星へは、太陽を焦点とする楕円軌道の半分を使う考え方が基本です。</div>
+        <div class="tut-fact"><strong>🚀 Δv（デルタV）</strong>「最高速度」ではなく、ロケットが速度をどれだけ変えられるかという能力。燃料・重さ・エンジン性能で変わります。</div>
+        <div class="tut-fact"><strong>🌏 発射場所も関係する</strong>地球は自転しているため、東向き打ち上げでは赤道に近い発射場ほど自転の助けを得やすくなります。</div>
+      </div>
+      <div class="callout"><b>今日の重要語：</b> AU／公転／楕円軌道／先行角／Δv／地球自転</div>
+    </section>
+
+    <section class="tut-page" data-step="2">
+      <h2>STEP 2｜自由研究の「問い」と6つの論点</h2>
+      <div class="tut-summary"><b>中心の問い</b><br><span class="tut-big" style="font-size:clamp(20px,4vw,30px)">火星へは、どこを狙ってロケットを飛ばせばいいのか？</span></div>
+      <div class="tut-grid" style="margin-top:10px">
+        <div class="tut-fact"><strong>A/B｜どこを狙う？</strong>今いる火星 vs 約259日後に来る未来位置</div>
+        <div class="tut-fact"><strong>C｜どういう道で行く？</strong>直線イメージ vs 太陽を焦点とする楕円軌道</div>
+        <div class="tut-fact"><strong>D｜どちらへ加速する？</strong>公転方向・逆向き・太陽方向を比較</div>
+        <div class="tut-fact"><strong>E｜どんなロケットなら行ける？</strong>軽さ・燃料・エンジン性能・多段式とΔv</div>
+        <div class="tut-fact"><strong>F｜どこから打ち上げる？</strong>種子島・クールー・バイコヌールなどの緯度と自転速度</div>
+        <div class="tut-fact"><strong>最後｜法則で説明できる？</strong>ケプラー3法則＋ツィオルコフスキーで結果を振り返る</div>
+      </div>
+      <h3>最初の予想を選ぼう</h3>
+      <div class="tut-choice">
+        <label><input type="radio" name="tutHyp" value="A">A：火星が今いる場所を狙えばよい</label>
+        <label><input type="radio" name="tutHyp" value="B">B：火星が未来に来る場所を先回りして狙う</label>
+        <label><input type="radio" name="tutHyp" value="C">C：まだ分からない。実験して確かめたい</label>
+      </div>
+      <div class="callout red"><b>検証のルール：</b>比較実験では、できるだけ「1回に変える条件は1つ」。何が結果を変えたのかを説明できるようにします。</div>
+    </section>
+
+    <section class="tut-page" data-step="3">
+      <h2>STEP 3｜実験A・B「どこを狙う？」</h2>
+      <div class="tut-ab">
+        <div class="tut-ab-card"><h3>実験A｜今の火星</h3><span class="free-badge">先行角 0°</span><span class="free-badge">Δv 2.95 km/s</span><p class="small">火星が今いる位置をそのまま狙う考え方。</p><button class="tut-run" id="runA">🚀 Aを実行</button><div class="tut-result" id="resultA">まだ実験していません。</div></div>
+        <div class="tut-ab-card"><h3>実験B｜未来の火星</h3><span class="free-badge">先行角 約44°</span><span class="free-badge">Δv 2.95 km/s</span><p class="small">約259日後の火星の位置を先回りする考え方。</p><button class="tut-run" id="runB">🚀 Bを実行</button><div class="tut-result" id="resultB">まだ実験していません。</div></div>
+      </div>
+      <div class="tut-result" id="abCompare">AとBを両方実行すると、違いをここで比較します。</div>
+      <div class="callout"><b>発見につながる問い：</b>「ロケットの速さが同じなのに、なぜ狙う位置だけで結果が大きく変わる？」</div>
+    </section>
+
+    <section class="tut-page" data-step="4">
+      <h2>STEP 4｜実験C「直線？ それとも楕円？」</h2>
+      <div class="tut-ab">
+        <div class="tut-ab-card"><h3>予想C-1｜火星へ一直線</h3><p class="small">地図のように「地球から火星へ線を引いて飛べばいい」と考えてみます。</p></div>
+        <div class="tut-ab-card"><h3>実験C-2｜太陽を回る楕円</h3><p class="small">地球も火星も太陽の周りを動いているので、探査機も太陽周回軌道の一部として移動します。</p></div>
+      </div>
+      <button class="tut-run" id="runC">🟢 実験Cを比較</button><div class="tut-result" id="resultC">まだ比較していません。</div>
+      <div class="tut-law"><b>つながる法則：ケプラー第1法則</b><br>惑星や探査機の軌道は、太陽を焦点とする楕円として考えられます。ホーマン遷移では、その楕円の半分を利用します。</div>
+    </section>
+
+    <section class="tut-page" data-step="5">
+      <h2>STEP 5｜実験D「どちらへ速度を足す？」</h2>
+      <p class="small">火星は地球より外側。地球から受け継いだ約29.8 km/sの太陽公転速度に、どちら向きのΔvを加えると軌道が火星側へ広がるか比べます。</p>
+      <div class="tut-grid">
+        <div class="tut-fact"><strong>① 公転方向へ加速</strong>太陽に対する速度を増やして、より外側まで届く楕円軌道へ。</div>
+        <div class="tut-fact"><strong>② 公転方向と反対へ</strong>速度を落とすため、軌道は内側へ下がりやすい。太陽探査ではこちらが重要になることがあります。</div>
+        <div class="tut-fact"><strong>③ 太陽方向へ</strong>目的地へ直接向ける発想。でも火星への遷移に必要な「横方向の公転速度」の調整とは違います。</div>
+      </div>
+      <button class="tut-run" id="runD">🚀 実験Dを比較</button><div class="tut-result" id="resultD">まだ比較していません。</div>
+      <div class="tut-law"><b>つながる法則：ケプラー第2法則</b><br>太陽に近いところほど速く、遠いところほど遅くなります。速度の向きを変えることで、軌道そのものの形と大きさが変わります。</div>
+    </section>
+
+    <section class="tut-page" data-step="6">
+      <h2>STEP 6｜実験E「どんなロケットなら行ける？」</h2>
+      <p class="small">同じ火星ミッションでも、機体が重い・燃料が少ない・エンジン性能が低いと、必要なΔvを出せないことがあります。</p>
+      <div class="tut-ab">
+        <div class="tut-ab-card"><h3>機体E-1｜重い標準機</h3><span class="free-badge">乾燥 3000kg</span><span class="free-badge">燃料 3000kg</span><span class="free-badge">ve 3.5km/s</span></div>
+        <div class="tut-ab-card"><h3>機体E-2｜軽量・燃料多め</h3><span class="free-badge">乾燥 1000kg</span><span class="free-badge">燃料 3000kg</span><span class="free-badge">ve 3.5km/s</span></div>
+      </div>
+      <button class="tut-run" id="runE">⛽ 実験Eを計算</button><div class="tut-result" id="resultE">まだ計算していません。</div>
+      <div class="tut-law"><b>つながる法則：ツィオルコフスキーのロケット方程式</b><br>Δv = ve × ln(m₀/m₁)。中1では式を解かなくてOK。「軽くする」「燃料を積む」「エンジン性能を上げる」がΔvにどう効くかを見ることが大切です。</div>
+    </section>
+
+    <section class="tut-page" data-step="7">
+      <h2>STEP 7｜実験F「どこから打ち上げる？」</h2>
+      <p class="small">地球から宇宙へ上がる段階では、地球の自転も利用できます。東向きに打ち上げる場合の自転速度を比較します。</p>
+      <div class="tut-grid">
+        <div class="tut-fact"><strong>🇬🇫 クールー 約5.2°N</strong>赤道に近く、東向き自転速度は約0.463 km/s。</div>
+        <div class="tut-fact"><strong>🇯🇵 種子島 約30.4°N</strong>東向き自転速度は約0.401 km/s。</div>
+        <div class="tut-fact"><strong>🇰🇿 バイコヌール 約45.9°N</strong>東向き自転速度は約0.324 km/s。</div>
+        <div class="tut-fact"><strong>注意</strong>「赤道に近ければいつでも最強」ではありません。目標軌道、安全な落下方向、海、天候なども発射場選びに関係します。</div>
+      </div>
+      <button class="tut-run" id="runF">🌏 実験Fを比較</button><div class="tut-result" id="resultF">まだ比較していません。</div>
+      <div class="callout"><b>これはケプラーの法則ではありません。</b>地球の自転と円運動による効果です。自由研究では「発射条件の違い」として別の論点にします。</div>
+    </section>
+
+    <section class="tut-page" data-step="8">
+      <h2>STEP 8｜6つの実験を、法則で振り返る</h2>
+      <div class="tut-summary" id="tutConclusion"><b>6実験を完了すると、ここに自由研究の結論がまとまります。</b></div>
+      <div class="tut-law"><b>ケプラー第1法則｜楕円</b><br>火星へは直線ではなく、太陽を焦点とする楕円軌道を利用する。</div>
+      <div class="tut-law"><b>ケプラー第2法則｜太陽に近いほど速い</b><br>地球側では速く、火星側へ遠ざかるにつれて遅くなる。</div>
+      <div class="tut-law"><b>ケプラー第3法則｜遠いほど公転周期が長い</b><br>火星の1年は約1.88地球年。だから259日の飛行中にも火星は大きく動く。</div>
+      <div class="tut-law"><b>ツィオルコフスキー｜機体・燃料・Δv</b><br>目的の軌道を作るには必要なΔvを出せるロケットが必要。燃料を増やせば単純に2倍になるわけではない。</div>
+      <div class="tut-law"><b>地球自転｜発射場所</b><br>東向き打ち上げなら、赤道に近いほど地表の自転速度を利用しやすい。</div>
+    </section>
+
+    <section class="tut-page" data-step="9">
+      <h2>STEP 9｜ここから自由設計・自由実験</h2>
+      <p>チュートリアルでは「正解を覚える」のではなく、比較して理由を発見しました。ここから自分のロケットで研究します。</p>
+      <div class="tut-grid">
+        <div class="tut-fact"><strong>🔧 機体設計</strong>燃料・乾燥質量・エンジン・多段式を変える。</div>
+        <div class="tut-fact"><strong>🎯 先行角</strong>44°を30°・50°・60°へ変えて最接近距離を比較。</div>
+        <div class="tut-fact"><strong>🚀 Δvと方向</strong>速度の大きさだけでなく、どちらへ加えるかを比較。</div>
+        <div class="tut-fact"><strong>🌏 発射場所</strong>種子島・クールーなどを選び、自転速度の違いを見る。</div>
+      </div>
+      <div class="callout red"><b>研究の約束：</b>①予想 → ②条件設定 → ③実験 → ④結果 → ⑤なぜ？ → ⑥次に変える1条件。<br><b>一度に変える条件は原則1つ。</b></div>
+      <button class="tut-run" id="finishTutorial" style="background:#5ee39b">🔓 ロケットビルダーで自由研究を始める</button>
+    </section>
+
+    <div class="tut-actions"><button class="tut-prev" id="tutPrev">← 戻る</button><button class="tut-next" id="tutNext">次へ →</button></div>
+  </div>
+</div>
 <div class="app">
   <div class="top">
     <div><h1>🔴 火星へは、どこを狙ってロケットを飛ばせばいいのか？</h1><div class="sub">自分で作ったロケットで「火星へは今の場所を狙うのではなく、未来の火星へ先回りする」ことを実験します。ケプラーの法則・ツィオルコフスキーのロケット方程式・発射場所の違いを、結果から振り返ります。</div></div>
-    <div class="mode-tools"><button class="modebtn" id="deviceBtn">端末版を変更</button><button class="modebtn" id="builderBtn">← ロケットビルダー</button></div>
+    <div class="mode-tools"><button class="modebtn tutorial-open" id="tutorialBtn">🎓 チュートリアル</button><button class="modebtn" id="deviceBtn">端末版を変更</button><button class="modebtn" id="builderBtn">← ロケットビルダー</button></div>
   </div>
 
   <div class="card" style="margin-top:0">
@@ -116,12 +242,34 @@ function coach(r){let why=[],next=[];if(r.dir!=='prograde'){why.push('火星は�
 $('coach').innerHTML=`<h3>🧑‍🚀 実験アドバイス</h3><p><b>今回どうだった？</b><br>${why.join('<br>')}</p><div class="next"><b>次の実験：</b> ${next[0]}。<br><span class="small">大事：一度に変える条件は1つだけ。</span></div>`}
 function result(r){$('missOut').textContent=`約${r.miss.toFixed(0)}万km`;$('scoreOut').textContent=`${r.score}/100`;$('scoreBig').textContent=`${r.score}点`;$('dvOut').textContent=`${r.dv.toFixed(2)} km/s`;$('phaseFill').style.width=`${r.score}%`;let grade=r.score>=90?'火星ランデブー級':r.score>=75?'かなり接近':r.score>=55?'軌道は近い':'再設計しよう';$('resultBadges').innerHTML=`<span class="badge">${grade}</span><span class="badge">先行角誤差 ${r.phaseErr.toFixed(1)}°</span>`;$('resultText').innerHTML=`<b>今回の結果：</b>火星との最接近は学習モデル上 約${r.miss.toFixed(0)}万km。<br><b>考察：</b>${r.score>=90?'火星の未来位置と遷移条件がかなり一致しました。':'どの条件がずれていたかを下のアドバイスで確認し、1つだけ変えて再実験しましょう。'}<br><b>自由研究で言えること：</b>火星探査では「今の火星」を狙うのではなく、地球と火星の公転を予測し、到着時に同じ場所になる軌道を作る必要があります。`;$('law1').textContent=`今回の地球→火星遷移は、太陽を焦点とする楕円軌道として考えます。地球軌道1 AUと火星軌道1.524 AUの間をつなぎます。`;$('law2').textContent=`探査機は太陽に近い地球側で速く、外側の火星側へ行くほど太陽に対する速さが小さくなります。これが第2法則につながります。`;$('law3').textContent=`地球の1年より火星の1年（約1.88年）が長いので、約259日の飛行中にも地球と火星の位置関係は大きく変わります。`;$('law4').textContent=`今回のビルダー機体の計算Δvは約${r.rdv.toFixed(2)} km/s。燃料を増やしてもΔvは単純比例しないことを比較できます。`;coach(r)}
 function drawBase(ctx,w,h){ctx.fillStyle='#02070e';ctx.fillRect(0,0,w,h);let cx=w*.5,cy=h*.5,scale=Math.min(w,h)*.25;ctx.strokeStyle='#24364a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,scale,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,scale*1.524,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#ffbf47';ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fill();ctx.fillStyle='#cbd5e1';ctx.font='12px sans-serif';ctx.fillText('太陽',cx+18,cy+4);return {cx,cy,scale}}
-function drawStatic(t=0,r=calc()){const c=$('canvas'),ctx=c.getContext('2d'),w=c.width,h=c.height,{cx,cy,scale}=drawBase(ctx,w,h);let earthA=t*2*Math.PI,mars0=r.phase*Math.PI/180,marsA=mars0+t*2*Math.PI/1.881;let ex=cx+Math.cos(earthA)*scale,ey=cy+Math.sin(earthA)*scale,mx=cx+Math.cos(marsA)*scale*1.524,my=cy+Math.sin(marsA)*scale*1.524;ctx.fillStyle= '#4aa3ff';ctx.beginPath();ctx.arc(ex,ey,9,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef6b4a';ctx.beginPath();ctx.arc(mx,my,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#dbeafe';ctx.fillText('地球',ex+12,ey);ctx.fillText('火星',mx+12,my);let a=(1+1.524)/2,e=(1.524-1)/(1.524+1);ctx.save();ctx.translate(cx-scale*a*e,cy);ctx.strokeStyle='rgba(94,227,155,.8)';ctx.setLineDash([7,6]);ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(0,0,scale*a,scale*a*Math.sqrt(1-e*e),0,0,Math.PI*2);ctx.stroke();ctx.restore();ctx.setLineDash([]);if(t>0){let theta=Math.min(Math.PI,t/0.709*Math.PI);let rx=cx-scale*a*e+Math.cos(theta)*scale*a,ry=cy+Math.sin(theta)*scale*a*Math.sqrt(1-e*e);ctx.fillStyle='#f5f5f5';ctx.beginPath();ctx.arc(rx,ry,6,0,Math.PI*2);ctx.fill();ctx.fillText('探査機',rx+9,ry-8)}}
+function drawStatic(t=0,r=calc()){const c=$('canvas'),ctx=c.getContext('2d'),w=c.width,h=c.height,{cx,cy,scale}=drawBase(ctx,w,h);let earthA=t*2*Math.PI,mars0=r.phase*Math.PI/180,marsA=mars0+t*2*Math.PI/1.881;let ex=cx+Math.cos(earthA)*scale,ey=cy+Math.sin(earthA)*scale,mx=cx+Math.cos(marsA)*scale*1.524,my=cy+Math.sin(marsA)*scale*1.524;ctx.fillStyle= '#4aa3ff';ctx.beginPath();ctx.arc(ex,ey,9,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef6b4a';ctx.beginPath();ctx.arc(mx,my,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#dbeafe';ctx.fillText('地球',ex+12,ey);ctx.fillText('火星',mx+12,my);let a=(1+1.524)/2,e=(1.524-1)/(1.524+1);ctx.save();ctx.translate(cx-scale*a*e,cy);ctx.strokeStyle='rgba(94,227,155,.95)';ctx.setLineDash([]);ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(0,0,scale*a,scale*a*Math.sqrt(1-e*e),0,0,Math.PI);ctx.stroke();ctx.strokeStyle='rgba(94,227,155,.20)';ctx.setLineDash([6,8]);ctx.lineWidth=2;ctx.beginPath();ctx.ellipse(0,0,scale*a,scale*a*Math.sqrt(1-e*e),0,Math.PI,Math.PI*2);ctx.stroke();ctx.restore();ctx.setLineDash([]);ctx.fillStyle='#5ee39b';ctx.font='bold 13px sans-serif';ctx.fillText('ホーマン遷移：太陽を焦点とする楕円軌道',cx-scale*.25,cy-scale*.86);ctx.fillStyle='#94a3b8';ctx.font='12px sans-serif';ctx.fillText('出発：地球軌道 1.000 AU',cx+scale+12,cy+25);ctx.fillText('到着：約259日後・火星軌道 1.524 AU',cx-scale*1.52,cy-25);if(t>0){let theta=Math.min(Math.PI,t/0.709*Math.PI);let rx=cx-scale*a*e+Math.cos(theta)*scale*a,ry=cy+Math.sin(theta)*scale*a*Math.sqrt(1-e*e);ctx.fillStyle='#f5f5f5';ctx.beginPath();ctx.arc(rx,ry,7,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ffffff';ctx.font='bold 12px sans-serif';ctx.fillText('探査機',rx+10,ry-9)}}
 function launch(){if(anim)cancelAnimationFrame(anim);let r=calc();last=r;result(r);let start=performance.now(),dur=5200;function frame(now){let p=Math.min(1,(now-start)/dur),years=p*.709;drawStatic(years,r);$('timeOut').textContent=`約${Math.round(p*TRANSFER_DAYS)}日 / 259日`;if(p<1)anim=requestAnimationFrame(frame);else{$('timeOut').textContent='約259日';drawStatic(.709,r)}}anim=requestAnimationFrame(frame)}
 function ideal(){ $('phase').value=Math.round(IDEAL_PHASE);$('phaseVal').textContent='44°';$('dv').value=IDEAL_DV;$('dvVal').textContent='2.95 km/s';$('direction').value='prograde';rocketDv();drawStatic();}
 function reset(){ideal();$('prediction').value='';last=null;$('missOut').textContent='—';$('scoreOut').textContent='—';$('scoreBig').textContent='—';$('resultBadges').innerHTML='';$('resultText').textContent='まだ実験していません。';$('coach').innerHTML='<h3>🧑‍🚀 実験アドバイス</h3><p>まず先行角を予想して打ち上げてみよう。</p><div class="next">おすすめ：基準条件と比べて、次は1つだけ条件を変える。</div>';drawStatic()}
 function addRecord(){if(!last){last=calc();result(last)}records.push({...last,site:sites[$('site').value].name});if(records.length>8)records.shift();$('records').innerHTML=records.map((r,i)=>`<tr><td>${i+1}</td><td>${r.site}</td><td>${r.phase.toFixed(0)}°</td><td>${r.dir==='prograde'?'公転方向':r.dir}</td><td>${r.dv.toFixed(2)}</td><td>${r.rdv.toFixed(2)}</td><td>${r.miss.toFixed(0)}万km</td><td>${r.score}</td></tr>`).join('')}
-$('phase').oninput=e=>{$('phaseVal').textContent=e.target.value+'°';drawStatic()};$('dv').oninput=e=>{$('dvVal').textContent=(+e.target.value).toFixed(2)+' km/s';drawStatic()};['dry','fuel','ve','fuelUse'].forEach(id=>$(id).addEventListener('input',rocketDv));$('site').onchange=siteUpdate;$('direction').onchange=()=>drawStatic();$('launchBtn').onclick=launch;$('qLaunch').onclick=launch;$('idealBtn').onclick=ideal;$('qIdeal').onclick=ideal;$('resetBtn').onclick=reset;$('recordBtn').onclick=addRecord;$('builderBtn').onclick=()=>location.href='index.html?device='+mode;$('deviceBtn').onclick=()=>{applyMode(mode==='mobile'?'desktop':'mobile')};loadBuilder();applyMode(mode);siteUpdate();rocketDv();ideal();drawStatic();
+
+let tutStep=1,tutA=null,tutB=null,tutDone={C:false,D:false,E:false,F:false};
+function tutorialCalc(phase,dir='prograde',dv=IDEAL_DV,rdv=9){const phaseErr=Math.abs(phase-IDEAL_PHASE),dirFactor=dir==='prograde'?1:dir==='outward'?.55:dir==='sunward'?.35:.08,dvErr=Math.abs(dv-IDEAL_DV),capability=Math.min(1,rdv/Math.max(.2,dv));let miss=5+phaseErr*3+dvErr*42+(1-dirFactor)*160+(1-capability)*110;let score=100-Math.min(95,phaseErr*1.4+dvErr*13+(1-dirFactor)*38+(1-capability)*35);return {phase,dv,dir,miss:Math.max(2,miss),score:Math.round(Math.max(5,score)),phaseErr}}
+function showTutStep(n){tutStep=Math.max(1,Math.min(9,n));document.querySelectorAll('.tut-page').forEach(el=>el.classList.toggle('active',+el.dataset.step===tutStep));const names=['','まず必要な知識','問いと6論点','実験A・B｜狙う場所','実験C｜直線か楕円か','実験D｜加速方向','実験E｜ロケット性能','実験F｜発射場所','法則で総合考察','自由設計へ'];$('tutProgress').textContent=`STEP ${tutStep} / 9　${names[tutStep]}`;$('tutFill').style.width=(tutStep/9*100)+'%';$('tutPrev').style.visibility=tutStep===1?'hidden':'visible';$('tutNext').style.display=tutStep===9?'none':'inline-block'}
+function tutorialPrediction(){const x=document.querySelector('input[name="tutHyp"]:checked');return x?x.value:null}
+function runTutorialA(){tutA=tutorialCalc(0);$('resultA').className='tut-result bad';$('resultA').innerHTML=`<b>結果A：</b>最接近 約${tutA.miss.toFixed(0)}万km ／ 達成度 ${tutA.score}点。<br><b>理由：</b>約259日の間に火星が公転して先へ進み、「今いた場所」にはもういません。`;updateTutorialConclusion()}
+function runTutorialB(){tutB=tutorialCalc(IDEAL_PHASE);$('resultB').className='tut-result good';$('resultB').innerHTML=`<b>結果B：</b>最接近 約${tutB.miss.toFixed(0)}万km ／ 達成度 ${tutB.score}点。<br><b>理由：</b>火星を約44°先に置くことで、約259日後の未来位置を先回りできました。`;updateABCompare();updateTutorialConclusion()}
+function updateABCompare(){if(!tutA||!tutB)return;const diff=tutA.miss-tutB.miss;$('abCompare').className='tut-result good';$('abCompare').innerHTML=`<b>A/B比較：</b>変えたのは先行角だけ。BはAより最接近距離が学習モデル上 約${diff.toFixed(0)}万km改善。<br><b>発見：</b>火星探査では「今どこにいるか」だけでなく「到着時にどこにいるか」を予測する必要があります。`}
+function runTutorialC(){tutDone.C=true;$('resultC').className='tut-result good';$('resultC').innerHTML=`<b>結果C：</b>一直線に「今の火星」へ向かう考えでは、飛行中に地球も火星も動くため合流条件を説明できません。<br><b>楕円軌道なら：</b>探査機自身も太陽の周りを回る物体として、地球軌道1.000 AUから火星軌道1.524 AUへ移れます。<br><b>発見：</b>火星への道は「2点を結ぶ直線」ではなく「太陽を焦点とする軌道」。`;updateTutorialConclusion()}
+function runTutorialD(){tutDone.D=true;const pro=tutorialCalc(IDEAL_PHASE,'prograde'),retro=tutorialCalc(IDEAL_PHASE,'retrograde'),sun=tutorialCalc(IDEAL_PHASE,'sunward');$('resultD').className='tut-result good';$('resultD').innerHTML=`<b>比較結果：</b><br>公転方向へ加速 → 達成度 ${pro.score}点<br>反対へ減速 → ${retro.score}点<br>太陽方向へ → ${sun.score}点<br><b>発見：</b>火星は外側なので、太陽に対する横向き速度を公転方向へ足して、楕円軌道の遠日点を火星側まで広げるのが基本です。`;updateTutorialConclusion()}
+function calcDv(dry,fuel,ve=3.5){return ve*Math.log((dry+fuel)/dry)}
+function runTutorialE(){tutDone.E=true;const heavy=calcDv(3000,3000),light=calcDv(1000,3000);$('resultE').className='tut-result good';$('resultE').innerHTML=`<b>計算結果：</b><br>重い機体（乾燥3000kg＋燃料3000kg）→ Δv 約${heavy.toFixed(2)} km/s<br>軽量機（乾燥1000kg＋燃料3000kg）→ Δv 約${light.toFixed(2)} km/s<br><b>火星遷移の学習目安：</b>約2.95 km/s。<br><b>発見：</b>同じ燃料量でも、運ぶ「からだ」が軽いほど速度を変えやすい。だから多段式で不要部分を切り離す意味が出てきます。`;updateTutorialConclusion()}
+function rotationAt(lat){return .4651*Math.cos(lat*Math.PI/180)}
+function runTutorialF(){tutDone.F=true;const k=rotationAt(5.2),t=rotationAt(30.4),b=rotationAt(45.9);$('resultF').className='tut-result good';$('resultF').innerHTML=`<b>東向き自転速度の比較：</b><br>クールー 約${k.toFixed(3)} km/s（${Math.round(k*3600)} km/h）<br>種子島 約${t.toFixed(3)} km/s（${Math.round(t*3600)} km/h）<br>バイコヌール 約${b.toFixed(3)} km/s（${Math.round(b*3600)} km/h）<br><b>発見：</b>東向き打ち上げなら赤道に近いほど自転の助けが大きい。ただし発射場は安全・目標軌道・地理などでも決まります。`;updateTutorialConclusion()}
+function updateTutorialConclusion(){const complete=tutA&&tutB&&tutDone.C&&tutDone.D&&tutDone.E&&tutDone.F;if(!complete)return;$('tutConclusion').innerHTML=`<b>6つの実験から導いた結論</b><br>① 火星は「今の位置」ではなく、到着する約259日後の未来位置を狙う。<br>② 地球から火星へは直線ではなく、太陽を焦点とする楕円軌道を使う。<br>③ 火星は外側なので、太陽に対して公転方向へ速度を足し、軌道を広げる。<br>④ 必要なΔvを出すには、燃料だけでなく機体を軽くすることも重要。<br>⑤ 東向き打ち上げでは、赤道に近い発射場ほど地球自転の助けが大きい。<br><br><b>法則とのつながり：</b>ケプラー第1〜3法則で軌道と公転を、ツィオルコフスキーの式でロケットのΔvを説明できます。`}
+function openTutorial(){if(anim)cancelAnimationFrame(anim);$('tutorialOverlay').classList.remove('hidden');showTutStep(1)}
+function transferTutorialPrediction(){const hyp=tutorialPrediction();if(hyp&&!$('prediction').value)$('prediction').value=hyp==='A'?'最初は火星が今いる場所を狙えばよいと思った。':hyp==='B'?'火星が未来に来る場所を先回りして狙う必要があると思った。':'どこを狙えばよいか分からないので、比較実験で確かめたい。'}
+function finishTutorialToBuilder(){transferTutorialPrediction();localStorage.setItem('marsTutorialSeen','1');localStorage.setItem('marsTutorialPrediction',$('prediction').value||'');location.href='index.html?device='+mode+'&tutorial=done'}
+function skipTutorial(){transferTutorialPrediction();$('tutorialOverlay').classList.add('hidden');ideal();drawStatic()}
+$('tutPrev').onclick=()=>showTutStep(tutStep-1);$('tutNext').onclick=()=>{if(tutStep===2&&!tutorialPrediction()){alert('まずA・B・Cのどれか予想を選んでください。');return}if(tutStep===3&&(!tutA||!tutB)){alert('実験AとBを両方実行して比較してください。');return}if(tutStep===4&&!tutDone.C){alert('実験Cを実行してください。');return}if(tutStep===5&&!tutDone.D){alert('実験Dを実行してください。');return}if(tutStep===6&&!tutDone.E){alert('実験Eを実行してください。');return}if(tutStep===7&&!tutDone.F){alert('実験Fを実行してください。');return}showTutStep(tutStep+1)};
+$('runA').onclick=runTutorialA;$('runB').onclick=runTutorialB;$('runC').onclick=runTutorialC;$('runD').onclick=runTutorialD;$('runE').onclick=runTutorialE;$('runF').onclick=runTutorialF;$('finishTutorial').onclick=finishTutorialToBuilder;$('tutSkip').onclick=skipTutorial;$('tutorialBtn').onclick=openTutorial;
+
+$('phase').oninput=e=>{$('phaseVal').textContent=e.target.value+'°';drawStatic()};$('dv').oninput=e=>{$('dvVal').textContent=(+e.target.value).toFixed(2)+' km/s';drawStatic()};['dry','fuel','ve','fuelUse'].forEach(id=>$(id).addEventListener('input',rocketDv));$('site').onchange=siteUpdate;$('direction').onchange=()=>drawStatic();$('launchBtn').onclick=launch;$('qLaunch').onclick=launch;$('idealBtn').onclick=ideal;$('qIdeal').onclick=ideal;$('resetBtn').onclick=reset;$('recordBtn').onclick=addRecord;$('builderBtn').onclick=()=>location.href='index.html?device='+mode;$('deviceBtn').onclick=()=>{applyMode(mode==='mobile'?'desktop':'mobile')};loadBuilder();applyMode(mode);siteUpdate();rocketDv();ideal();drawStatic();const forceTut=new URLSearchParams(location.search).get('tutorial')==='1';if(forceTut||localStorage.getItem('marsTutorialSeen')!=='1'){showTutStep(1)}else{$('tutorialOverlay').classList.add('hidden');const savedPred=localStorage.getItem('marsTutorialPrediction');if(savedPred&&!$('prediction').value)$('prediction').value=savedPred;}
 })();
 </script>
 </body></html>
