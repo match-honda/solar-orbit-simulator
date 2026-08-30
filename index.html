@@ -108,7 +108,7 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;borde
   </div>
 
   <div class="actions">
-   <button id="toSimReal" class="btn primary">火星シミュレーションへ</button>
+   <button id="toSimReal" class="btn primary">このロケットで火星シミュレーションへ</button>
   </div>
  </div>
 
@@ -157,7 +157,18 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;borde
    <option value="44.34" selected>44.3°：お手本</option><option value="55">55°</option><option value="70">70°</option><option value="90">90°</option>
   </select></div>
   <h3 style="margin-top:13px">② Δv</h3>
-  <div class="control"><input id="simDv" type="number" min="0" max="12" step=".01" value="2.945"><div class="small">単位 km/s。お手本は約2.945。</div></div>
+  <div class="control">
+   <div class="kpi" style="padding:12px;margin-bottom:9px">
+    <div class="small">ロケットビルダーから引き継いだ Δv</div>
+    <div class="num" id="simDvDisplay" style="font-size:38px">2.945</div><b>km/s</b>
+   </div>
+   <input id="simDv" type="number" min="0" max="12" step=".01" value="2.945" readonly style="background:#eef3f8;color:#54657a">
+   <label style="margin-top:10px;justify-content:flex-start;align-items:center;gap:8px;font-weight:700">
+    <input id="overrideDv" type="checkbox" style="width:20px;height:20px">
+    実験用にΔvを手動で上書きする
+   </label>
+   <div class="small">通常はロケットビルダーで作った値をそのまま使います。比較実験をしたい時だけ手動上書きをONにします。</div>
+  </div>
 
   <h3 style="margin-top:13px">③ 噴射方向を選ぶ</h3>
   <div class="dirDiagram">
@@ -209,7 +220,7 @@ const root=document;
 const $=id=>document.getElementById(id);
 const G0=9.80665, AU=149597870.7, MU=1.32712440018e11, RMARS=3389.5;
 const rE=AU,rM=1.523679*AU,vE=Math.sqrt(MU/rE),vM=Math.sqrt(MU/rM);
-let chosenDir=0, result=null, animId=null, logs=[], viewMode='2d';
+let chosenDir=0, result=null, animId=null, logs=[], viewMode='2d', builderMode='real', currentBuilderDv=6.45;
 
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
@@ -218,7 +229,9 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
 }));
 document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{
  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');
- const real=b.dataset.mode==='real';$('realMode').classList.toggle('hidden',!real);$('freeMode').classList.toggle('hidden',real);
+ const real=b.dataset.mode==='real';builderMode=real?'real':'free';
+ $('realMode').classList.toggle('hidden',!real);$('freeMode').classList.toggle('hidden',real);
+ currentBuilderDv = real ? parseFloat($('realDv').textContent) : parseFloat($('freeDv').textContent);
 }));
 
 
@@ -235,8 +248,37 @@ function freeCalc(){
  const dry=+$('dry').value,fuel=+$('fuel').value,isp=+$('isp').value;
  $('dryOut').textContent=dry.toFixed(1)+' t';$('fuelOut').textContent=fuel.toFixed(1)+' t';$('ispOut').textContent=isp.toFixed(0)+' s';
  const dv=fuel>0?isp*G0*Math.log((dry+fuel)/dry)/1000:0;$('freeDv').textContent=dv.toFixed(2);
+ if(builderMode==='free') currentBuilderDv=dv;
 }
 ['dry','fuel','isp'].forEach(id=>$(id).addEventListener('input',freeCalc));freeCalc();
+
+
+function syncBuilderDvToSim(){
+ currentBuilderDv = builderMode==='real' ? parseFloat($('realDv').textContent) : parseFloat($('freeDv').textContent);
+ $('simDv').value=currentBuilderDv.toFixed(3);
+ $('simDvDisplay').textContent=currentBuilderDv.toFixed(3);
+ $('simDv').readOnly=true;
+ $('simDv').style.background='#eef3f8';
+ $('simDv').style.color='#54657a';
+ $('overrideDv').checked=false;
+ $('liveText').textContent=`ロケットビルダーのΔv ${currentBuilderDv.toFixed(3)} km/s を読み込みました`;
+}
+$('overrideDv').addEventListener('change',()=>{
+ const on=$('overrideDv').checked;
+ $('simDv').readOnly=!on;
+ $('simDv').style.background=on?'#fff':'#eef3f8';
+ $('simDv').style.color=on?'var(--ink)':'#54657a';
+ if(!on){
+  $('simDv').value=currentBuilderDv.toFixed(3);
+  $('simDvDisplay').textContent=currentBuilderDv.toFixed(3);
+ }
+});
+$('simDv').addEventListener('input',()=>{
+ if($('overrideDv').checked){
+  const v=Math.max(0,Math.min(12,parseFloat($('simDv').value)||0));
+  $('simDvDisplay').textContent=v.toFixed(3);
+ }
+});
 
 const directions=[
  {a:0,icon:'⬆️',name:'0° 進行方向',desc:'地球の進む向き。火星側へ軌道を広げやすい。'},
@@ -362,14 +404,32 @@ $('launchBtn').addEventListener('click',()=>{
  result=simulate(phase,dv,chosenDir,550);$('closestOut').textContent='計算中…';$('gradeOut').textContent='—';animateLaunch(result);
 });
 $('demoSet').addEventListener('click',()=>{
- $('phase').value='44.34';$('simDv').value='2.945';chosenDir=0;document.querySelectorAll('.dirBtn').forEach((x,i)=>x.classList.toggle('selected',i===0));updateDir(directions[0]);$('liveText').textContent='お手本条件：44.3° / 2.945 km/s / 0°';
+ $('phase').value='44.34';
+ chosenDir=0;
+ document.querySelectorAll('.dirBtn').forEach((x,i)=>x.classList.toggle('selected',i===0));
+ updateDir(directions[0]);
+ if($('overrideDv').checked){
+  $('simDv').value='2.945';
+  $('simDvDisplay').textContent='2.945';
+  $('liveText').textContent='お手本条件：44.3° / Δv 2.945 km/s / 0°';
+ }else{
+  $('liveText').textContent=`お手本の位置と方向に戻しました。Δvはロケットビルダーの ${currentBuilderDv.toFixed(3)} km/s を使用`;
+ }
 });
-$('toSimReal').addEventListener('click',()=>{document.querySelector('[data-tab="sim"]').click();$('demoSet').click();});
+$('toSimReal').addEventListener('click',()=>{
+ syncBuilderDvToSim();
+ document.querySelector('[data-tab="sim"]').click();
+ $('phase').value='44.34';
+ chosenDir=0;
+ document.querySelectorAll('.dirBtn').forEach((x,i)=>x.classList.toggle('selected',i===0));
+ updateDir(directions[0]);
+});
 $('recordBtn').addEventListener('click',()=>{
  if(!result)return;logs.push(result);const tb=$('log').querySelector('tbody');tb.innerHTML='';
  logs.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${r.phaseDeg.toFixed(1)}°</td><td>${r.dv.toFixed(3)}</td><td>${r.dirDeg}°</td><td>${Math.round(r.surface).toLocaleString()} km</td><td><b>${r.grade}</b></td>`;tb.appendChild(tr)});
 });
 $('clearBtn').addEventListener('click',()=>{logs=[];$('log').querySelector('tbody').innerHTML=''});
+$('simDvDisplay').textContent=$('simDv').value;
 const initial=simulate(44.34,2.945,0,550);draw($('space'),initial,.02);
 </script>
 </body>
