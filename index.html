@@ -1,268 +1,466 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-<meta name="theme-color" content="#020617" />
-<title>火星探査・軌道研究シミュレーター｜自由研究</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>火星探査機シミュレーション｜理科自由研究</title>
 <style>
 :root{
-  --bg:#020617;--panel:rgba(2,6,23,.92);--line:#334155;--text:#f8fafc;--muted:#94a3b8;
-  --accent:#38bdf8;--orange:#f97316;--green:#22c55e;--red:#ef4444;--violet:#8b5cf6;
+  --navy:#082b5c; --blue:#1769d2; --teal:#108d92; --orange:#ff7a00;
+  --bg:#f5f8fc; --card:#fff; --ink:#0c2344; --muted:#5e6d82; --line:#d7e1ee;
+  --good:#20a45b; --warn:#f2aa00; --bad:#dc3d33;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;touch-action:none}
-button{font:inherit}
-.hidden{display:none!important}
-#build-ui{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:30;width:min(270px,calc(100vw - 20px));max-height:calc(100vh - 80px);overflow:auto;background:var(--panel);border:1px solid #1e3a8a;border-radius:14px;padding:12px;box-shadow:0 8px 28px rgba(0,0,0,.45);backdrop-filter:blur(8px)}
-#build-ui h1{margin:0 0 9px;font-size:16px;color:#7dd3fc}.build-title-row{display:flex;align-items:center;justify-content:space-between;gap:8px}.build-title-row h1{margin:0!important}.panel-toggle{width:auto!important;min-height:32px!important;padding:5px 9px!important;font-size:10px!important;background:#0f172a!important;border:1px solid #38bdf8!important;color:#bae6fd!important}.gesture-strip{margin:7px 0 9px;display:grid;grid-template-columns:repeat(2,1fr);gap:5px}.gesture-chip{padding:6px 5px;border-radius:8px;background:#0f172a;border:1px solid #334155;text-align:center;font-size:9px;color:#cbd5e1;line-height:1.35}.gesture-chip b{color:#7dd3fc;display:block;font-size:10px}.builder-coach{margin:7px 0 9px;padding:9px;border-radius:10px;background:#071a2b;border:1px solid #0ea5e9}.coach-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:5px}.coach-title{font-weight:900;color:#7dd3fc;font-size:11px}.coach-status{font-size:9px;padding:3px 7px;border-radius:999px;background:#172033;border:1px solid #334155;color:#cbd5e1}.coach-message{font-size:10px;line-height:1.5;color:#e2e8f0}.coach-message b{color:#fff}.coach-next{display:flex;gap:5px;align-items:center;margin-top:7px;flex-wrap:wrap}.coach-next button{width:auto!important;min-height:30px!important;padding:5px 8px!important;font-size:9px!important;background:#075985!important;border-color:#0ea5e9!important}.coach-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:7px}.coach-stat{padding:5px;border-radius:7px;background:#0f172a;border:1px solid #26364d;text-align:center;font-size:8px;color:#94a3b8}.coach-stat b{display:block;color:#f8fafc;font-size:10px;margin-top:2px}.edit-toolbar{display:grid;grid-template-columns:1.35fr 1fr 1fr;gap:5px;margin:7px 0 9px}.edit-toolbar button{min-height:36px;padding:7px 6px;border-radius:8px;border:1px solid #475569;background:#172033;color:#fff;font-size:10px;font-weight:800}.edit-toolbar .delete-part{background:#7f1d1d;border-color:#ef4444}.edit-toolbar .undo-part{background:#334155}.edit-toolbar .selected-info{grid-column:1/-1;padding:6px 8px;border-radius:8px;border:1px solid #0ea5e9;background:#071a2b;color:#bae6fd;font-size:9px;line-height:1.4}.builder-collapsed .builder-grid,.builder-collapsed .sep,.builder-collapsed .builder-actions,.builder-collapsed .hint,.builder-collapsed .gesture-strip,.builder-collapsed .builder-coach,.builder-collapsed .edit-toolbar{display:none}.builder-collapsed{width:auto!important;max-height:none!important}.builder-collapsed .build-title-row{min-width:190px}
-#build-ui .hint{font-size:10px;color:var(--muted);margin:0 0 8px;line-height:1.45}
-.builder-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}.builder-grid button,.builder-actions button,.top-btn,.hud-btn,.dpad button{border:1px solid #475569;background:#172033;color:#fff;border-radius:8px;cursor:pointer;font-weight:700}
-.builder-grid button{padding:8px 6px;font-size:10px;min-height:38px}.builder-grid button.active{background:#c2410c;border-color:#fb923c;box-shadow:0 0 10px rgba(249,115,22,.35)}
-.sep{height:1px;background:#334155;margin:8px 0}.builder-actions{display:grid;gap:6px}.builder-actions button{padding:10px;font-size:11px}.launch{background:#15803d!important;border-color:#22c55e!important}.reset{background:#7f1d1d!important;border-color:#b91c1c!important}
-#build-help{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:20;background:rgba(0,0,0,.68);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:10px;color:var(--muted);pointer-events:none;text-align:center;width:max-content;max-width:calc(100vw - 20px)}
-#launch-overlay{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;background:radial-gradient(circle at center,#f97316 0,#312e81 42%,#000 90%)}
-#launch-overlay.show{display:flex}#launch-overlay h2{margin:0 0 12px;color:#e0f2fe;text-shadow:0 0 18px #38bdf8;font:800 clamp(22px,4vw,42px)/1.1 ui-monospace,monospace}#launch-overlay p{margin:0;color:#dbeafe;font-size:clamp(12px,2vw,18px)}
-#flight-canvas{position:fixed;inset:0;width:100%;height:100%;display:none;background:#020617;z-index:10}
-#global-controls{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:40;display:none;background:rgba(0,0,0,.82);border:1px solid #7c3aed;border-radius:12px;padding:8px;gap:6px;flex-direction:column;width:190px}.top-btn{padding:8px 9px;font-size:10px}.overview{background:#6d28d9!important}.builder-return{background:#475569!important}
-#fleet-hud{position:fixed;left:max(10px,env(safe-area-inset-left));top:max(10px,env(safe-area-inset-top));bottom:max(10px,env(safe-area-inset-bottom));z-index:50;width:270px;display:none;flex-direction:column;gap:8px;overflow:auto;padding-right:2px;pointer-events:auto}
-.ship-panel{background:rgba(0,0,0,.86);border:1px solid #38bdf8;border-radius:11px;padding:9px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;box-shadow:0 5px 16px rgba(0,0,0,.3)}.ship-panel h3{margin:0 0 5px;font-size:12px;display:flex;justify-content:space-between;gap:6px}.hud-row{display:flex;justify-content:space-between;gap:10px;font-size:10px;margin:2px 0;color:#cbd5e1}.hud-btn-row{display:flex;gap:4px;margin-top:5px}.hud-btn{flex:1;padding:6px 3px;font-size:9px;background:#075985;border:0}.stage{background:#b91c1c}.destruct{background:#7f1d1d;color:#fecaca;border:1px solid #b91c1c}.follow{background:#3730a3}.dpad{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:116px;margin:6px auto 2px}.dpad button{height:32px;padding:0;font-size:14px;background:#334155}.dpad .thrust{background:#f97316;color:#111827}.status-ok{color:#4ade80}.status-warn{color:#facc15}.status-bad{color:#f87171}.status-lost{color:#94a3b8}
-#toast{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:120;min-width:220px;max-width:80vw;background:rgba(15,23,42,.95);border:1px solid #475569;border-radius:12px;padding:11px 14px;text-align:center;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:opacity .2s}
-#confirm{position:fixed;inset:0;z-index:130;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:18px}#confirm.show{display:flex}.confirm-card{width:min(360px,100%);background:#111827;border:1px solid #b91c1c;border-radius:14px;padding:18px;text-align:center}.confirm-card h3{margin:0 0 8px;color:#fecaca}.confirm-card p{color:#cbd5e1;font-size:12px;line-height:1.6}.confirm-actions{display:flex;gap:8px;margin-top:14px}.confirm-actions button{flex:1;border:0;border-radius:8px;padding:10px;color:#fff;font-weight:800}.cancel{background:#475569}.yes{background:#b91c1c}
-
-#guide-open{position:fixed;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:70;border:1px solid #38bdf8;background:rgba(2,6,23,.92);color:#e0f2fe;border-radius:999px;padding:9px 12px;font-weight:800;font-size:11px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
-#guide-modal{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.78)}
-#guide-modal.show{display:flex}.guide-card{width:min(560px,100%);max-height:88vh;overflow:auto;background:#0f172a;border:1px solid #38bdf8;border-radius:16px;padding:16px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
-.guide-card h2{margin:0 0 5px;color:#7dd3fc;font-size:18px}.guide-card .lead{margin:0 0 12px;color:#cbd5e1;font-size:12px;line-height:1.55}.guide-steps{display:grid;gap:8px}.guide-step{display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:start;background:#111827;border:1px solid #334155;border-radius:11px;padding:10px}.guide-num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#075985;color:white;font-weight:900}.guide-step b{display:block;font-size:12px;margin-bottom:3px}.guide-step span{display:block;color:#94a3b8;font-size:11px;line-height:1.45}.guide-tip{margin-top:10px;padding:9px 10px;border-radius:9px;background:#172554;border:1px solid #1d4ed8;color:#dbeafe;font-size:11px;line-height:1.5}.guide-close{margin-top:12px;width:100%;border:0;border-radius:10px;padding:11px;background:#15803d;color:white;font-weight:900}.guide-mini{margin-top:8px;text-align:center;color:#64748b;font-size:10px}
-#boot-status{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:65;width:min(520px,calc(100vw - 32px));background:rgba(2,6,23,.94);border:1px solid #334155;border-radius:12px;padding:11px 13px;color:#cbd5e1;text-align:center;font-size:11px;line-height:1.5}.boot-error{border-color:#b91c1c!important;color:#fecaca!important}
-#no-script{position:fixed;inset:0;z-index:999;display:grid;place-items:center;background:#020617;color:#fecaca;padding:24px;text-align:center;font-size:14px;line-height:1.7}
-@media (max-width:760px){
- #build-ui{top:auto;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));width:auto;max-height:42vh;padding:9px}#build-ui h1{font-size:14px}.builder-grid{grid-template-columns:repeat(3,1fr)}.builder-grid button{font-size:9px;min-height:35px;padding:6px 4px}#build-help{top:max(8px,env(safe-area-inset-top));bottom:auto;font-size:9px}
- #fleet-hud{left:6px;right:6px;top:auto;bottom:max(6px,env(safe-area-inset-bottom));width:auto;height:42vh;display:none;flex-direction:row;overflow-x:auto;overflow-y:hidden;align-items:stretch}.ship-panel{min-width:225px;max-width:225px;height:max-content}.dpad{width:108px}.dpad button{height:30px}
- #global-controls{top:max(6px,env(safe-area-inset-top));right:6px;width:auto;max-width:190px}.top-btn{font-size:9px;padding:7px}#guide-open{top:max(8px,env(safe-area-inset-top));right:8px;padding:8px 10px;font-size:10px}#boot-status{top:12%}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--ink);background:linear-gradient(180deg,#fff 0,#f3f7fb 100%)}
+header{background:var(--navy);color:#fff;padding:16px 20px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px #0002}
+header .wrap{max-width:1200px;margin:auto;display:flex;align-items:center;gap:14px;justify-content:space-between}
+.brand{font-weight:800;font-size:clamp(18px,2.4vw,28px)}
+.badge{font-size:13px;background:#ffffff18;border:1px solid #ffffff44;border-radius:999px;padding:6px 10px}
+main{max-width:1200px;margin:0 auto;padding:22px 16px 60px}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:stretch}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 8px 28px #15365a0e}
+h1{font-size:clamp(30px,5vw,56px);line-height:1.06;margin:0 0 14px}
+h2{font-size:clamp(23px,3vw,36px);margin:0 0 14px}
+h3{font-size:19px;margin:0 0 10px}
+p{line-height:1.7}
+.orange{color:var(--orange)} .teal{color:var(--teal)}
+.bigq{font-size:clamp(19px,2.5vw,28px);font-weight:800;line-height:1.5}
+.heroVisual{min-height:240px;background:radial-gradient(circle at 82% 50%,#b43b1f 0 9%,#6e1d15 10% 13%,transparent 14%),radial-gradient(circle at 18% 60%,#2f7ed9 0 6%,#143b74 7% 8%,transparent 9%),radial-gradient(circle at 50% 55%,#ffc85b 0 4%,#ff8d00 5% 6%,transparent 7%),linear-gradient(145deg,#04182f,#071426 70%,#130d18);border-radius:18px;position:relative;overflow:hidden}
+.heroVisual:after{content:"";position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:31px 31px;opacity:.25}
+.tabs{display:flex;gap:8px;margin:22px 0 14px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:#fff;color:var(--navy);padding:11px 16px;border-radius:999px;font-weight:800;cursor:pointer}
+.tab.active{background:var(--navy);color:#fff}
+.section{display:none}.section.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.control{margin:14px 0;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.control:last-child{border-bottom:0}
+label{display:flex;justify-content:space-between;gap:8px;font-weight:800;margin-bottom:8px}
+small,.small{color:var(--muted);font-size:13px;line-height:1.5}
+input[type=range]{width:100%;accent-color:var(--blue)}
+input[type=number],select{width:100%;padding:10px 12px;border:1px solid #bfcde0;border-radius:10px;background:#fff;color:var(--ink);font-size:16px}
+.kpi{background:#f3f8ff;border:1px solid #cbdcf3;border-radius:15px;padding:16px;text-align:center}
+.kpi .value{font-size:clamp(32px,5vw,54px);font-weight:900;color:var(--blue);line-height:1}
+.kpi .unit{font-size:18px;font-weight:800}
+.note{background:#fff6e8;border:1px solid #ffd495;border-radius:14px;padding:12px 14px;line-height:1.6}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-size:16px;font-weight:900;cursor:pointer}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.demo{background:linear-gradient(90deg,var(--teal),#1a63b8);color:#fff;width:100%;font-size:19px}
+.btn.orange{background:var(--orange);color:#fff}
+.btn.ghost{background:#fff;border:1px solid #bfd0e5;color:var(--navy)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.missionBtns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.missionBtn{background:#f7faff;border:1px solid #cddaea;border-radius:10px;padding:10px 8px;font-weight:800;cursor:pointer}
+.missionBtn:hover{border-color:var(--blue)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left}
+th{background:#eef5ff}
+canvas{width:100%;height:auto;display:block;background:#040d1b;border-radius:14px;border:1px solid #152640}
+.scoreGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:12px}
+.score{padding:8px 4px;border-radius:10px;text-align:center;font-weight:900;color:#fff}
+.A{background:#168f56}.B{background:#59a928}.C{background:#e8a900}.D{background:#ed7a11}.E{background:#df4937}.F{background:#b6202d}
+.resultBox{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.metric{background:#f7f9fc;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.metric b{display:block;font-size:20px;margin-top:3px}
+.help{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:#eaf2ff;color:var(--blue);font-weight:900;cursor:help}
+.modal{display:none;position:fixed;inset:0;background:#00101fdd;z-index:100;padding:20px;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.modalCard{max-width:980px;width:100%;background:#fff;border-radius:18px;padding:16px;max-height:95vh;overflow:auto}
+.modalTop{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.x{font-size:28px;background:none;border:0;cursor:pointer}
+.demoSteps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.demoStep{padding:8px;border-radius:9px;background:#eef5ff;font-size:13px;text-align:center;font-weight:700}
+.demoStep.on{background:#fff1dc;color:#a94c00}
+.refcard{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.pill{display:inline-block;border-radius:999px;padding:5px 9px;background:#e8f8f7;color:#087779;font-size:12px;font-weight:800}
+footer{margin-top:26px;color:var(--muted);font-size:12px;line-height:1.6}
+@media(max-width:820px){
+  .hero,.grid2,.grid3{grid-template-columns:1fr}
+  .missionBtns{grid-template-columns:1fr 1fr}
+  .scoreGrid{grid-template-columns:repeat(3,1fr)}
+  .resultBox{grid-template-columns:1fr}
+  .demoSteps{grid-template-columns:1fr 1fr}
 }
-
-/* ===== Device selector / usability profiles ===== */
-#device-choice{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 15%,#10213b 0,#020617 55%,#000 100%);display:flex;align-items:center;justify-content:center;padding:18px;overflow:auto;touch-action:pan-y}
-.device-card{width:min(760px,100%);background:rgba(2,6,23,.97);border:1px solid #334155;border-radius:20px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.55)}
-.device-card h2{margin:0 0 6px;color:#e0f2fe;font-size:clamp(20px,4vw,30px)}.device-card>p{margin:0 0 16px;color:#94a3b8;font-size:13px;line-height:1.6}
-.device-options{display:grid;grid-template-columns:1fr 1fr;gap:12px}.device-option{min-height:170px;border:1px solid #475569;border-radius:15px;background:#0f172a;color:#fff;padding:16px;text-align:left;cursor:pointer}.device-option b{display:block;font-size:19px;color:#7dd3fc;margin-bottom:8px}.device-option span{display:block;color:#cbd5e1;font-size:12px;line-height:1.55}.device-option small{display:block;color:#64748b;margin-top:10px;line-height:1.45}.device-auto{margin-top:12px;padding:10px;border-radius:10px;background:#071a2b;border:1px solid #0ea5e9;color:#bae6fd;font-size:11px;line-height:1.5}
-#device-switch{position:fixed;z-index:72;top:max(54px,calc(env(safe-area-inset-top) + 44px));right:max(10px,env(safe-area-inset-right));border:1px solid #475569;background:rgba(2,6,23,.9);color:#cbd5e1;border-radius:999px;padding:7px 10px;font-size:9px;font-weight:800}
-body.device-desktop #build-ui{top:max(12px,env(safe-area-inset-top));bottom:auto;left:max(12px,env(safe-area-inset-left));right:auto;width:330px;max-height:calc(100vh - 24px);padding:13px}
-body.device-desktop .builder-grid{grid-template-columns:1fr 1fr}body.device-desktop .builder-grid button{min-height:40px;font-size:10px}
-body.device-desktop .gesture-strip{grid-template-columns:repeat(2,1fr)}body.device-desktop #build-help{top:auto;bottom:max(10px,env(safe-area-inset-bottom))}
-body.device-desktop #fleet-hud{left:max(10px,env(safe-area-inset-left));right:auto;top:max(10px,env(safe-area-inset-top));bottom:max(10px,env(safe-area-inset-bottom));width:280px;height:auto;flex-direction:column;overflow-y:auto;overflow-x:hidden}
-body.device-mobile #build-ui{top:auto!important;left:8px!important;right:8px!important;bottom:max(8px,env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;padding:9px!important}
-body.device-mobile .builder-grid{grid-template-columns:repeat(3,1fr)!important}body.device-mobile .builder-grid button{font-size:10px!important;min-height:44px!important;padding:7px 4px!important}
-body.device-mobile .edit-toolbar button,body.device-mobile .builder-actions button{min-height:46px!important}body.device-mobile .gesture-strip{grid-template-columns:repeat(2,1fr)}
-body.device-mobile #build-help{top:max(8px,env(safe-area-inset-top))!important;bottom:auto!important;font-size:9px}body.device-mobile #fleet-hud{left:6px!important;right:6px!important;top:auto!important;bottom:max(6px,env(safe-area-inset-bottom))!important;width:auto!important;height:42vh!important;flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important}
-body.device-mobile .ship-panel{min-width:235px;max-width:235px}body.device-mobile .dpad button{min-height:38px}
-body.device-mobile #panel-toggle{min-height:38px!important}.mobile-focus-tip{display:none}
-body.device-mobile .mobile-focus-tip{display:block;margin:6px 0;padding:7px 8px;border-radius:8px;background:#172554;border:1px solid #1d4ed8;color:#dbeafe;font-size:9px;line-height:1.45}
-@media(max-width:560px){.device-options{grid-template-columns:1fr}.device-option{min-height:145px}.device-card{padding:15px}}
-
 </style>
 </head>
 <body>
+<header><div class="wrap"><div class="brand">🚀 火星探査機シミュレーション</div><div class="badge">中学1年 理科自由研究</div></div></header>
 
-<div id="device-choice">
-  <div class="device-card">
-    <h2>🚀 火星探査・軌道研究シミュレーター</h2>
-    <p>最初に操作する機器を選んでください。同じ研究データを使いますが、操作盤とジェスチャーをそれぞれ使いやすく最適化します。</p>
-    <div class="device-options">
-      <button type="button" class="device-option" data-device="desktop"><b>🖥️ パソコン版</b><span>マウスで正確に組み立て。ドラッグ＝視点回転、ホイール＝ズーム。フライトは矢印キー＋Spaceにも対応。</span><small>おすすめ：細かい機体設計、複数機の比較、学校のPC。</small></button>
-      <button type="button" class="device-option" data-device="mobile"><b>📱 スマホ版</b><span>大きなボタンと下部操作盤。1本指＝回転、2本指＝画面移動、ピンチ＝ズーム。配置済みパーツはタップ→ドラッグ。</span><small>おすすめ：iPhone / Android、友だちにQRで体験してもらう時。</small></button>
-    </div>
-    <div class="device-auto" id="device-auto">💡 端末を自動判定しています。選んだ版はいつでも右上から変更できます。</div>
+<main>
+<section class="hero">
+  <div class="panel">
+    <div class="pill">研究の問い</div>
+    <h1>どんな条件なら<br><span class="orange">火星に最も近づける？</span></h1>
+    <p class="bigq">ロケットを設計 → Δv（デルタ・ブイ）を計算 → 火星との位置・噴射方向を決めて打ち上げます。</p>
+    <div class="note"><b>初心者メモ：</b> Δv は「デルタ・ブイ」と読み、<b>速度をどれだけ変えられるか</b>を表します。このアプリでは <b>km/s（秒速何km）</b> に統一します。</div>
   </div>
-</div>
-<button id="device-switch" type="button" class="hidden">🖥️/📱 版を変更</button>
+  <div class="heroVisual" aria-label="太陽・地球・火星のイメージ"></div>
+</section>
 
-<noscript><div id="no-script">この画面ではJavaScriptが実行されていません。<br>シミュレーターを使うには、GitHub PagesなどのWebページとしてSafari / Chromeで開いてください。</div></noscript>
-<div id="boot-status">🚀 起動チェック中… 3Dエンジンを読み込んでいます</div>
-<button id="guide-open" type="button">？ 使い方</button>
-<div id="guide-modal">
-  <div class="guide-card">
-    <h2>🚀 はじめかた</h2>
-    <p class="lead">1機ずつロケットを作って発射し、最大5機を同時運用する宇宙フライト・シミュレーターです。</p>
-    <div class="guide-steps">
-      <div class="guide-step"><div class="guide-num">1</div><div><b>パーツを選ぶ</b><span>まず「司令船」と「🔥 燃料+エンジン」を必ず使います。燃料タンク・分離装置・人工衛星などは自由に追加できます。</span></div></div>
-      <div class="guide-step"><div class="guide-num">2</div><div><b>宇宙空間をタップして配置</b><span>スマホは1本指ドラッグ＝視点回転、2本指ドラッグ＝画面移動、ピンチ＝ズーム、短いタップ＝パーツ配置。PCはドラッグ・ホイール・クリックです。</span></div></div>
-      <div class="guide-step"><div class="guide-num">3</div><div><b>「この機体を発射」</b><span>条件を満たすと打ち上げ演出のあと地球周回付近へ投入されます。最初は1号機です。</span></div></div>
-      <div class="guide-step"><div class="guide-num">4</div><div><b>フライト操作</b><span>◀ ▶で旋回、中央の🔥を押している間だけ噴射。S1〜S5は搭載した分離装置を作動。「🎯追従」でその機体を画面中央にします。</span></div></div>
-      <div class="guide-step"><div class="guide-num">5</div><div><b>2〜5号機を追加</b><span>「🔧 次の機体を組み立てる」でビルダーへ戻ります。宇宙にいる機体は残ったまま、次の号機を作って追加発射できます。</span></div></div>
-      <div class="guide-step"><div class="guide-num">6</div><div><b>ミッション終了・自爆</b><span>「💥 自爆」→確認→爆発。機体はLOSTとなり、デブリが四散します。号機番号は途中で消えてもズレません。</span></div></div>
+<div class="tabs">
+  <button class="tab active" data-tab="builder">① ロケットビルダー</button>
+  <button class="tab" data-tab="sim">② 火星シミュレーション</button>
+  <button class="tab" data-tab="refs">実在ミッション参考</button>
+  <button class="tab" data-tab="guide">用語ガイド</button>
+</div>
+
+<section id="builder" class="section active">
+  <div class="grid2">
+    <div class="panel">
+      <h2>ロケットビルダー <span class="orange">簡易版</span></h2>
+      <p>条件を動かすと、出せる Δv がすぐ変わります。</p>
+
+      <div class="control">
+        <label>乾燥重量 <span id="dryOut">15.0 t</span></label>
+        <input id="dry" type="range" min="1" max="100" value="15" step="0.5">
+        <div class="small">燃料を除いたロケット本体・機材などの重さ</div>
+      </div>
+      <div class="control">
+        <label>燃料重量 <span id="fuelOut">85.0 t</span></label>
+        <input id="fuel" type="range" min="0" max="250" value="85" step="1">
+      </div>
+      <div class="control">
+        <label>Isp（アイ・エス・ピー） <span id="ispOut">450 s</span></label>
+        <input id="isp" type="range" min="220" max="470" value="450" step="1">
+        <div class="small">比推力（ひすいりょく）。ざっくり言うと「エンジンの燃料の使い方の効率」。単位は秒。</div>
+      </div>
+      <div class="control">
+        <label>打ち上げロケットの段数 <span id="stageOut">2 段</span></label>
+        <input id="stages" type="range" min="1" max="4" value="2" step="1">
+        <div class="small">この簡易版では段数は記録・比較用。正確な多段計算には「各段ごとの重量と燃料」が必要です。</div>
+      </div>
+
+      <h3>実在ミッションを参考にする</h3>
+      <div class="missionBtns">
+        <button class="missionBtn" data-mission="perseverance">Perseverance</button>
+        <button class="missionBtn" data-mission="curiosity">Curiosity</button>
+        <button class="missionBtn" data-mission="maven">MAVEN</button>
+        <button class="missionBtn" data-mission="mro">MRO</button>
+      </div>
+      <div id="missionNote" class="small" style="margin-top:8px">※実在値は探査機そのものの重量の参考。打ち上げロケット全体の燃料量とは分けて考えます。</div>
     </div>
-    <div class="guide-tip">🎓 <b>チュートリアル後の自由設計：</b>ここから自分のロケットを組み立てます。「この機体で火星研究へ」から、ケプラーの法則・ツィオルコフスキーのロケット方程式・火星への遷移軌道の自由実験に進めます。<br><br>💡 最初のおすすめ：司令船 → 燃料タンク → 第1分離 → 燃料+エンジンの順に縦へ重ねて、まず1号機を発射してみてください。</div>
-    <button class="guide-close" id="guide-close" type="button">研究を始める</button>
-    <div class="guide-mini">いつでも右上の「？ 使い方」から開き直せます</div>
+
+    <div class="panel">
+      <h2>計算結果</h2>
+      <div class="kpi">
+        <div class="small">理想ロケット方程式による使用可能 Δv</div>
+        <div class="value" id="dvOut">0.00</div>
+        <div class="unit">km/s</div>
+      </div>
+      <p id="judgeText" class="bigq" style="text-align:center"></p>
+      <div class="note">
+        <b>計算：</b><br>
+        Δv = Isp × g × ln(m₀ / m₁)<br><br>
+        <b>Isp</b>＝エンジン性能　<b>g</b>＝重力の基準 9.80665 m/s²<br>
+        <b>ln</b>（エル・エヌ）＝重さの比を計算する数学<br>
+        <b>m₀</b>＝燃料を積んだ重さ　<b>m₁</b>＝燃料を使った後の重さ
+      </div>
+      <div class="actions">
+        <button id="sendToSim" class="btn primary">この Δv を火星シミュレーションへ</button>
+        <button id="resetBuilder" class="btn ghost">初期値に戻す</button>
+      </div>
+      <p class="small">注意：これは「空気抵抗・重力損失・各段の詳細」を省いた理想計算です。実物を完全再現するものではありません。</p>
+    </div>
+  </div>
+</section>
+
+<section id="sim" class="section">
+  <div class="grid2">
+    <div class="panel">
+      <button id="demoBtn" class="btn demo">▶ お手本シミュレーションを見る</button>
+      <p class="small">まず「約44°先にいる火星」「Δv 約2.94 km/s」「進行方向へ噴射」の例をアニメーションで見ます。</p>
+      <canvas id="space" width="900" height="620"></canvas>
+      <div class="resultBox">
+        <div class="metric">経過日数<b id="daysOut">0 日</b></div>
+        <div class="metric">最接近距離<b id="closestOut">— km</b></div>
+        <div class="metric">評価<b id="gradeOut">—</b></div>
+      </div>
+      <div class="scoreGrid">
+        <div class="score A">A<br><small style="color:#fff">〜1万km</small></div>
+        <div class="score B">B<br><small style="color:#fff">〜5万km</small></div>
+        <div class="score C">C<br><small style="color:#fff">〜10万km</small></div>
+        <div class="score D">D<br><small style="color:#fff">〜50万km</small></div>
+        <div class="score E">E<br><small style="color:#fff">〜200万km</small></div>
+        <div class="score F">F<br><small style="color:#fff">200万km超</small></div>
+      </div>
+      <p class="small">評価は「火星表面までの最接近距離」で判定する、この自由研究用の比較基準です。</p>
+    </div>
+
+    <div class="panel">
+      <h2>条件を設定</h2>
+      <div class="control">
+        <label>火星の先行角 <span class="help" title="打ち上げ時に、火星が地球より何度先にいるか">?</span></label>
+        <input id="phase" type="number" value="44.34" min="0" max="180" step="0.1">
+        <div class="small">基準：ホーマン遷移の簡易計算では約44.3°</div>
+      </div>
+      <div class="control">
+        <label>Δv（デルタ・ブイ）[km/s]</label>
+        <input id="simDv" type="number" value="2.945" min="0" max="12" step="0.01">
+      </div>
+      <div class="control">
+        <label>噴射方向（地球の進行方向を0°）</label>
+        <input id="dir" type="number" value="0" min="-180" max="180" step="1">
+        <div class="small">0°＝進行方向へ加速。＋は外向き、−は内向きに傾ける簡易表現。</div>
+      </div>
+      <div class="control">
+        <label>計算する期間</label>
+        <select id="duration">
+          <option value="300">300日</option>
+          <option value="350" selected>350日</option>
+          <option value="500">500日</option>
+        </select>
+      </div>
+      <div class="actions">
+        <button id="launchBtn" class="btn orange">🚀 打ち上げ</button>
+        <button id="bestBtn" class="btn ghost">お手本値を入れる</button>
+        <button id="recordBtn" class="btn ghost">結果を記録</button>
+      </div>
+      <div id="simMessage" class="note" style="margin-top:12px">条件を決めて「打ち上げ」を押してください。</div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:18px">
+    <h3>実験記録</h3>
+    <div style="overflow:auto">
+      <table id="logTable">
+        <thead><tr><th>#</th><th>先行角</th><th>Δv</th><th>方向</th><th>最接近</th><th>評価</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="actions"><button id="csvBtn" class="btn ghost">実験記録をCSV保存</button><button id="clearLog" class="btn ghost">記録を消す</button></div>
+  </div>
+</section>
+
+<section id="refs" class="section">
+  <div class="panel">
+    <h2>実在する火星ミッションの参考値</h2>
+    <p>「探査機の重量」と「打ち上げロケット」は実データを参考にできます。ただし、<b>探査機のΔvを1つの数字で表すのは不正確</b>です。大きな加速は主に打ち上げロケットが行い、探査機自身のエンジンは途中の軌道修正や火星周回軌道への投入などに使います。</p>
+    <div style="overflow:auto">
+      <table>
+        <thead><tr><th>ミッション</th><th>種類</th><th>参考重量</th><th>打ち上げロケット</th><th>メモ</th></tr></thead>
+        <tbody>
+          <tr><td><b>Perseverance</b></td><td>ローバー</td><td>1,025 kg</td><td>Atlas V 541</td><td>Atlas V 541は基本2段式＋固体ブースター4本</td></tr>
+          <tr><td><b>Curiosity</b></td><td>ローバー</td><td>899 kg</td><td>Atlas V 541</td><td>火星科学研究所（MSL）</td></tr>
+          <tr><td><b>MAVEN</b></td><td>周回機</td><td>乾燥809 kg／燃料込2,454 kg</td><td>Atlas V 401</td><td>火星上層大気を研究</td></tr>
+          <tr><td><b>MRO</b></td><td>周回機</td><td>燃料込2,180 kg</td><td>Atlas V 401</td><td>Mars Reconnaissance Orbiter</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid3" style="margin-top:16px">
+      <div class="refcard"><b>ホーマン遷移の移動時間</b><br><span class="orange" style="font-size:28px;font-weight:900">約259日</span><p class="small">円軌道化した中学生向け簡易モデル。</p></div>
+      <div class="refcard"><b>理想的な先行角</b><br><span class="orange" style="font-size:28px;font-weight:900">約44.3°</span><p class="small">打ち上げ時、火星が地球より先。</p></div>
+      <div class="refcard"><b>火星への好条件</b><br><span class="orange" style="font-size:28px;font-weight:900">約26か月ごと</span><p class="small">地球と火星の位置関係による。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="guide" class="section">
+  <div class="panel">
+    <h2>初心者向け 用語ガイド</h2>
+    <div class="grid2">
+      <div class="refcard"><h3>Δv（デルタ・ブイ）</h3><p>速度の変化量。<b>3 km/s</b>なら「秒速3 kmぶん速度を変える」という意味。</p></div>
+      <div class="refcard"><h3>Isp（アイ・エス・ピー）</h3><p>比推力。エンジンが燃料をどれだけ効率よく使えるかを見る代表的な値。単位は秒。</p></div>
+      <div class="refcard"><h3>g（ジー）</h3><p>ロケット方程式では標準重力加速度 <b>9.80665 m/s²</b> を使います。</p></div>
+      <div class="refcard"><h3>ln（エル・エヌ）</h3><p>自然対数。中1では「燃料を積んだ時と使った後の<b>重さの比</b>を計算する数学」と理解すればOK。</p></div>
+      <div class="refcard"><h3>先行角（せんこうかく）</h3><p>出発するとき、火星が地球よりどれくらい先を進んでいるか。</p></div>
+      <div class="refcard"><h3>ホーマン遷移軌道</h3><p>地球側の軌道から火星側の軌道へ、エネルギーを節約しながら移る代表的な楕円軌道。</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+<b>このアプリの科学モデル</b><br>
+・ロケットビルダー：理想ロケット方程式を使用。空気抵抗、重力損失、各段の詳細は簡略化。<br>
+・火星シミュレーション：太陽の重力を中心とした2次元モデル。地球と火星は円軌道・一定速度・同一平面と仮定。NASA/JPLの教育用簡略化と同じ考え方です。<br>
+・実在ミッション値はNASA/JPL等の公開情報を参考にした学習用表示です。
+</footer>
+</main>
+
+<div id="demoModal" class="modal">
+  <div class="modalCard">
+    <div class="modalTop"><div><h2 style="margin:0">お手本シミュレーション</h2><div class="small">「未来の火星との待ち合わせ」を見てみよう</div></div><button class="x" id="closeDemo">×</button></div>
+    <div class="demoSteps"><div class="demoStep" id="ds1">① 火星を約44°先へ</div><div class="demoStep" id="ds2">② Δv 約2.94 km/s</div><div class="demoStep" id="ds3">③ 進行方向へ噴射</div><div class="demoStep" id="ds4">④ 約259日後に接近</div></div>
+    <canvas id="demoCanvas" width="900" height="560"></canvas>
+    <p id="demoText" class="note">地球も火星も動いています。火星の「今いる場所」ではなく、到着時の場所をねらいます。</p>
+    <div class="actions"><button id="demoReplay" class="btn primary">もう一度見る</button><button id="useDemo" class="btn orange">この条件で実験する</button></div>
   </div>
 </div>
-<div id="build-ui">
-  <div class="build-title-row"><h1>🚀 ロケットビルダー</h1><button id="panel-toggle" class="panel-toggle" type="button">▼ 小さくする</button></div>
-  <p class="hint">スマホは画面を直接動かせます。パーツ配置は短くタップ。</p>
-  <div class="mobile-focus-tip">📱 スマホのコツ：ロケットを見る場所を広くしたい時は「▼ 小さくする」。パーツを動かす時はパーツを一度タップして青くしてからドラッグ。</div>
-  <div class="gesture-strip"><div class="gesture-chip"><b>☝️ 空白を1本指</b>ドラッグ＝回転</div><div class="gesture-chip"><b>✌️ 2本指</b>ドラッグ＝画面移動</div><div class="gesture-chip"><b>🤏 ピンチ</b>拡大・縮小</div><div class="gesture-chip"><b>🧩 パーツを触る</b>選択・ドラッグ移動</div></div>
-  <div class="builder-coach" id="builder-coach">
-    <div class="coach-head"><div class="coach-title">🧑‍🚀 組み立てコーチ</div><div class="coach-status" id="coach-status">STEP 1</div></div>
-    <div class="coach-message" id="coach-message">まずは<b>司令船</b>を1つ置こう。ロケットの頭・司令室になる必須パーツです。</div>
-    <div class="coach-next" id="coach-next"></div>
-    <div class="coach-stats"><div class="coach-stat">パーツ<b id="coach-parts">0個</b></div><div class="coach-stat">推定質量<b id="coach-mass">0 kg</b></div><div class="coach-stat">研究準備<b id="coach-ready">未完</b></div></div>
-  </div>
-  <div class="edit-toolbar" id="edit-toolbar">
-    <button type="button" id="edit-mode-btn">✋ 配置済みパーツを選択</button>
-    <button type="button" class="undo-part" id="undo-btn">↩︎ 1つ戻す</button>
-    <button type="button" class="delete-part" id="delete-selected-btn">🗑 削除</button>
-    <div class="selected-info" id="selected-info">選択なし：配置済みパーツをタップすると、青く光ります。ドラッグすると別の位置へ移動できます。</div>
-  </div>
-  <div class="builder-grid" id="part-buttons"></div>
-  <div class="sep"></div>
-  <div class="builder-actions">
-    <button class="launch" id="launch-btn">🚀 この機体を発射</button>
-    <button id="research-from-builder" style="background:#7c3aed;border-color:#8b5cf6">🔴 この機体で火星研究へ</button>
-    <button class="reset" id="reset-btn">🗑 組み立てをリセット</button>
-  </div>
-</div>
-<div id="build-help">最大5号機まで運用 / フライト中も「機体を組み立てる」で追加発射できます</div>
-<div id="launch-overlay"><h2>IGNITION — LIFTOFF</h2><p>大気圏を突破し、火星へ向かう軌道を準備中…</p></div>
-<canvas id="flight-canvas"></canvas>
-<div id="global-controls">
-  <button class="top-btn overview" id="overview-btn">🪐 全体ビュー</button>
-  <button class="top-btn" id="research-btn" style="background:#7c3aed">🔴 火星研究モード</button>
-  <button class="top-btn builder-return" id="return-btn">🔧 次の機体を組み立てる</button>
-</div>
-<div id="fleet-hud"></div>
-<div id="toast"></div>
-<div id="confirm"><div class="confirm-card"><h3>💥 自爆シーケンス</h3><p id="confirm-text"></p><div class="confirm-actions"><button class="cancel" id="confirm-cancel">キャンセル</button><button class="yes" id="confirm-yes">自爆する</button></div></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>if(!window.THREE){document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"><\/script>')}</script>
+
 <script>
-if(typeof THREE==='undefined'){
-  const b=document.getElementById('boot-status');
-  if(b){b.classList.add('boot-error');b.innerHTML='⚠️ 3Dエンジンを読み込めませんでした。<br>このHTMLプレビューでは外部JavaScriptが制限される場合があります。GitHub Pages等に公開してSafari / Chromeで開いてください。';}
-  const gm=document.getElementById('guide-modal'),go=document.getElementById('guide-open'),gc=document.getElementById('guide-close');
-  if(go)go.onclick=()=>gm&&gm.classList.add('show');if(gc)gc.onclick=()=>gm&&gm.classList.remove('show');
-}else{
-(() => {
-'use strict';
+const G0 = 9.80665;
+const AU = 149597870.7;        // km
+const MU = 1.32712440018e11;  // km^3/s^2, Sun
+const RMARS = 3389.5;         // km
+const rE = AU;
+const rM = 1.523679 * AU;
+const vE = Math.sqrt(MU/rE);
+const vM = Math.sqrt(MU/rM);
+let builderDv = 0;
+let simResult = null;
+let logs = [];
 
-let deviceMode=null;
-function guessedDevice(){return (matchMedia('(pointer:coarse)').matches || innerWidth<760)?'mobile':'desktop'}
-function applyDeviceMode(mode,announce=true){deviceMode=mode==='desktop'?'desktop':'mobile';document.body.classList.remove('device-desktop','device-mobile');document.body.classList.add('device-'+deviceMode);try{localStorage.setItem('rocketDeviceMode',deviceMode)}catch(e){}const sw=document.getElementById('device-switch');if(sw){sw.classList.remove('hidden');sw.textContent=deviceMode==='mobile'?'📱 スマホ版':'🖥️ PC版'}const hint=document.querySelector('#build-ui .hint');if(hint)hint.textContent=deviceMode==='mobile'?'スマホ：1本指＝回転 / 2本指＝移動 / ピンチ＝ズーム / パーツをドラッグ＝移動':'PC：左ドラッグ＝視点回転 / ホイール＝ズーム / クリック＝配置 / 配置済みパーツをドラッグ＝移動';resize();if(announce&&typeof toast==='function')toast(deviceMode==='mobile'?'📱 スマホ操作に切替':'🖥️ PC操作に切替')}
-function openDeviceChoice(){const el=document.getElementById('device-choice');if(el)el.style.display='flex'}
-function closeDeviceChoice(){const el=document.getElementById('device-choice');if(el)el.style.display='none'}
-function initDeviceChoice(){const auto=guessedDevice();const a=document.getElementById('device-auto');if(a)a.textContent='💡 この端末のおすすめは「'+(auto==='mobile'?'スマホ版':'パソコン版')+'」です。初回は端末を選んだあと、自由研究チュートリアルから始まります。';const needsTutorial=()=>{try{return localStorage.getItem('marsTutorialSeen')!=='1'&&new URLSearchParams(location.search).get('tutorial')!=='done'}catch(e){return true}};const goTutorial=()=>{location.href='mars-research.html?device='+(deviceMode||auto)+'&tutorial=1'};document.querySelectorAll('[data-device]').forEach(b=>b.addEventListener('click',()=>{applyDeviceMode(b.dataset.device,false);closeDeviceChoice();if(needsTutorial()){setTimeout(goTutorial,60);return}const g=document.getElementById('guide-modal');if(g)g.classList.add('show')}));const sw=document.getElementById('device-switch');if(sw)sw.addEventListener('click',openDeviceChoice);let saved=null,fromQuery=null;try{fromQuery=new URLSearchParams(location.search).get('device');saved=localStorage.getItem('rocketDeviceMode')}catch(e){}const chosen=(fromQuery==='mobile'||fromQuery==='desktop')?fromQuery:saved;if(chosen){applyDeviceMode(chosen,false);closeDeviceChoice();if(needsTutorial())setTimeout(goTutorial,80)}else{document.body.classList.add('device-'+auto)}}
-const MAX_SHIPS=5, GRID=.5, SUB_STEPS=160;
-const COLORS=['#f97316','#38bdf8','#10b981','#ec4899','#eab308'];
-const PARTS=[
- ['command','司令船'],['body_block','本体ブロック'],['fuel','燃料タンク'],['fuel_engine','🔥 燃料+エンジン'],['fairing','フェアリング'],
- ['decoupler1','🔴 第1分離'],['decoupler2','🟠 第2分離'],['decoupler3','🟡 第3分離'],['decoupler4','🟢 第4分離'],['decoupler5','🔵 第5分離'],
- ['rcs','姿勢制御'],['landing_gear','着陸脚'],['satellite','人工衛星'],['fin','安定翼']
-];
-const PART_INFO={command:['司令船','ロケットの頭・司令室。発射には必須。'],body_block:['本体ブロック','機体を長くしたり形を整える。増やしすぎると重くなる。'],fuel:['燃料タンク','燃料が増えて長く加速できるが、その燃料自体も重い。'],fuel_engine:['燃料+エンジン','推進力を生む必須パーツ。まず1基置こう。'],fairing:['フェアリング','衛星などを空気から守るカバー。宇宙では不要になれば外す。'],decoupler1:['第1分離','使い終わった下段を捨てて軽くする。多段式の考え方につながる。'],decoupler2:['第2分離','さらに上段を分離する。段を増やすと設計が複雑になる。'],decoupler3:['第3分離','上級者向けの多段化。'],decoupler4:['第4分離','上級者向けの多段化。'],decoupler5:['第5分離','最上段分離。必要なときだけ使う。'],rcs:['姿勢制御','宇宙で向きを変える補助スラスタ。'],landing_gear:['着陸脚','火星着陸を考えるなら重要。軌道研究だけなら必須ではない。'],satellite:['人工衛星','軌道へ投入する目的物。'],fin:['安定翼','大気中で姿勢を安定させる。宇宙ではほぼ働かない。']};
-let mode='BUILD', scene,camera,renderer,raycaster,mouse,plane,previewMesh;
-let cameraRadius=3.5,cameraTheta=Math.PI/4,cameraPhi=Math.PI/3;
-const target=new THREE.Vector3(0,1,0), placedParts=[], intersectables=[], textures={};
-let selectedPlaced=null, movingPlaced=null, moveStartPos=null, historyStack=[];
-let animationFrameId=null, flightFrameId=null;
-const canvas=document.getElementById('flight-canvas'),ctx=canvas.getContext('2d');
-let ships=[], debris=[], explosions=[], overview=false, followShipId=null, nextShipNumber=1, pendingDestructId=null;
-let flightCamera={zoom:.25};
-const bodies=[
- {name:'太陽',radius:120,color:'#fbbf24',mass:60000000,orbitDist:0,orbitSpeed:0,angle:0,x:0,y:0},
- {name:'水星',radius:12,color:'#a855f7',mass:60,orbitDist:1200,orbitSpeed:.008,angle:0,x:0,y:0},
- {name:'金星',radius:18,color:'#facc15',mass:240,orbitDist:1900,orbitSpeed:.006,angle:1,x:0,y:0},
- {name:'地球',radius:22,color:'#38bdf8',mass:450,orbitDist:2800,orbitSpeed:.0045,angle:2.5,x:0,y:0},
- {name:'火星',radius:15,color:'#ef4444',mass:150,orbitDist:3800,orbitSpeed:.0035,angle:3,x:0,y:0},
- {name:'木星',radius:55,color:'#d97706',mass:3600,orbitDist:5600,orbitSpeed:.002,angle:4,x:0,y:0}
-];
 const $=id=>document.getElementById(id);
-function toast(msg){const el=$('toast');el.textContent=msg;el.style.opacity='1';clearTimeout(el._t);el._t=setTimeout(()=>el.style.opacity='0',1500)}
-function currentAlive(){return ships.filter(s=>s.status==='ACTIVE')}
-function shipById(id){return ships.find(s=>s.id===id)}
-function aliveCount(){return currentAlive().length}
-function updateBodyPositions(){bodies.forEach(b=>{if(b.orbitDist){b.x=Math.cos(b.angle)*b.orbitDist;b.y=Math.sin(b.angle)*b.orbitDist}})}
-function buildPartButtons(){const host=$('part-buttons');PARTS.forEach(([id,label],i)=>{const b=document.createElement('button');b.textContent=label;b.dataset.part=id;if(i===0)b.classList.add('active');b.onclick=()=>selectPart(id);host.appendChild(b)})}
-let currentPart='command';
-function selectPart(type){currentPart=type;document.querySelectorAll('#part-buttons button').forEach(b=>b.classList.toggle('active',b.dataset.part===type));updatePreview();updateBuilderCoach(type)}
-function makeTexture(type){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');g.fillStyle='#475569';g.fillRect(0,0,128,128);if(type==='command'){const q=g.createLinearGradient(0,0,128,128);q.addColorStop(0,'#e2e8f0');q.addColorStop(1,'#475569');g.fillStyle=q;g.fillRect(0,0,128,128);g.fillStyle='#0f172a';g.beginPath();g.arc(64,45,17,0,Math.PI*2);g.fill();g.strokeStyle='#38bdf8';g.lineWidth=4;g.stroke()}else if(type==='fuel'||type==='fuel_engine'){g.fillStyle='#ea580c';g.fillRect(0,0,128,type==='fuel_engine'?64:128);g.fillStyle='#334155';if(type==='fuel_engine')g.fillRect(0,64,128,64);g.strokeStyle='#ffedd5';g.lineWidth=8;g.strokeRect(8,8,112,112)}else if(type.startsWith('decoupler')){const cc=['#dc2626','#ea580c','#ca8a04','#16a34a','#2563eb'][+type.slice(-1)-1];g.fillStyle='#1e293b';g.fillRect(0,0,128,128);g.fillStyle=cc;g.fillRect(0,0,128,25);g.fillRect(0,103,128,25)}else if(type==='satellite'){g.fillStyle='#0ea5e9';g.fillRect(0,0,128,128);g.strokeStyle='#bae6fd';g.lineWidth=5;g.strokeRect(12,12,104,104)}else if(type==='fin'){g.fillStyle='#0284c7';g.beginPath();g.moveTo(0,128);g.lineTo(128,0);g.lineTo(128,128);g.fill()}else if(type==='fairing'){g.fillStyle='#e2e8f0';g.fillRect(0,0,128,128)}else if(type==='rcs'){g.fillStyle='#64748b';g.fillRect(0,0,128,128);g.fillStyle='#fde047';g.beginPath();g.arc(64,64,18,0,Math.PI*2);g.fill()}return new THREE.CanvasTexture(c)}
-function partHeight(t){return t==='fuel_engine'?GRID*2:GRID}
-function geom(t){const h=partHeight(t),s=GRID;let x;if(t==='command')x=new THREE.ConeGeometry(s/2,h,18);else if(t==='fuel'||t==='fuel_engine'||t.startsWith('decoupler'))x=new THREE.CylinderGeometry(s/2,s/2,h,18);else if(t==='fairing')x=new THREE.CylinderGeometry(s/3,s/2,h,18);else if(t==='fin'){x=new THREE.BoxGeometry(s*.25,h,s);x.translate(s*.375,0,0)}else x=new THREE.BoxGeometry(s,h,s);x.translate(0,h/2,0);return x}
-function meshFor(t){const m=new THREE.Mesh(geom(t),new THREE.MeshStandardMaterial({map:textures[t],roughness:.35,metalness:.25}));m.userData={type:t};return m}
-function updatePreview(){if(previewMesh)scene.remove(previewMesh);if(mode!=='BUILD')return;previewMesh=new THREE.Mesh(geom(currentPart),new THREE.MeshBasicMaterial({color:0x60a5fa,wireframe:true,transparent:true,opacity:.65}));scene.add(previewMesh)}
-function init3D(){scene=new THREE.Scene();scene.background=new THREE.Color(0x0f172a);camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,100);renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.domElement.style.position='fixed';renderer.domElement.style.inset='0';document.body.appendChild(renderer.domElement);scene.add(new THREE.AmbientLight(0xffffff,.75));const dl=new THREE.DirectionalLight(0xffffff,.95);dl.position.set(5,10,5);scene.add(dl);PARTS.forEach(([id])=>textures[id]=makeTexture(id));scene.add(new THREE.GridHelper(15,30,0xf97316,0x1e293b));const pg=new THREE.PlaneGeometry(15,15);pg.rotateX(-Math.PI/2);plane=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({visible:false}));scene.add(plane);intersectables.push(plane);raycaster=new THREE.Raycaster();mouse=new THREE.Vector2();updateCamera();updatePreview();animateBuild()}
-function updateCamera(){camera.position.set(target.x+cameraRadius*Math.sin(cameraPhi)*Math.sin(cameraTheta),target.y+cameraRadius*Math.cos(cameraPhi),target.z+cameraRadius*Math.sin(cameraPhi)*Math.cos(cameraTheta));camera.lookAt(target)}
-function screenRay(x,y){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);return raycaster.intersectObjects(intersectables,true)}
-function snap(hit){const p=hit.point.clone().add(hit.face.normal.clone().multiplyScalar(.001)),n=hit.face.normal;let x=Math.round(p.x/GRID)*GRID,z=Math.round(p.z/GRID)*GRID,y=Math.floor(p.y/GRID)*GRID;if(hit.object!==plane){if(n.y>.5)y=Math.round((hit.object.position.y+partHeight(hit.object.userData.type))/GRID)*GRID;else if(Math.abs(n.x)>.5||Math.abs(n.z)>.5){x=Math.round((hit.object.position.x+n.x*GRID)/GRID)*GRID;z=Math.round((hit.object.position.z+n.z*GRID)/GRID)*GRID;y=Math.round(hit.object.position.y/GRID)*GRID}}return{x,y,z}}
-function snapshotBuild(){return placedParts.map(p=>({type:p.userData.type,x:p.position.x,y:p.position.y,z:p.position.z}))}
-function pushHistory(){historyStack.push(snapshotBuild());if(historyStack.length>30)historyStack.shift()}
-function restoreBuild(snap){placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);snap.forEach(v=>{const m=meshFor(v.type);m.position.set(v.x,v.y,v.z);scene.add(m);placedParts.push(m);intersectables.push(m)});selectPlaced(null);updateBuilderCoach()}
-function undoBuild(){if(!historyStack.length){toast('↩︎ 戻せる操作がありません');return}restoreBuild(historyStack.pop());toast('↩︎ 1つ前に戻しました')}
-function partHit(x,y){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);return raycaster.intersectObjects(placedParts,true)[0]||null}
-function selectPlaced(m){if(selectedPlaced&&selectedPlaced.material){selectedPlaced.material.emissive&&selectedPlaced.material.emissive.setHex(0x000000);selectedPlaced.material.emissiveIntensity=0}selectedPlaced=m||null;const info=$('selected-info');if(selectedPlaced&&selectedPlaced.material){if(selectedPlaced.material.emissive){selectedPlaced.material.emissive.setHex(0x0ea5e9);selectedPlaced.material.emissiveIntensity=.55}const i=PART_INFO[selectedPlaced.userData.type]||[selectedPlaced.userData.type,''];info.innerHTML='選択中：<b>'+i[0]+'</b>　📍('+selectedPlaced.position.x.toFixed(1)+', '+selectedPlaced.position.y.toFixed(1)+', '+selectedPlaced.position.z.toFixed(1)+')<br>そのままドラッグで移動 ／ 「削除」で外せます。'}else if(info){info.textContent='選択なし：配置済みパーツをタップすると、青く光ります。ドラッグすると別の位置へ移動できます。'}}
-function deleteSelected(){if(!selectedPlaced){toast('削除するパーツを先に選んでください');return}pushHistory();const m=selectedPlaced;scene.remove(m);const i=placedParts.indexOf(m);if(i>=0)placedParts.splice(i,1);const j=intersectables.indexOf(m);if(j>=0)intersectables.splice(j,1);selectPlaced(null);updateBuilderCoach();toast('🗑 パーツを削除しました')}
-function dragTarget(x,y,m){mouse.x=x/innerWidth*2-1;mouse.y=-(y/innerHeight)*2+1;raycaster.setFromCamera(mouse,camera);const targets=intersectables.filter(o=>o!==m);const hits=raycaster.intersectObjects(targets,true);if(!hits.length)return null;return snap(hits[0])}
-function place(x,y){const hits=screenRay(x,y);if(!hits.length)return;pushHistory();const p=snap(hits[0]);const m=meshFor(currentPart);m.position.set(p.x,p.y,p.z);scene.add(m);placedParts.push(m);intersectables.push(m);selectPlaced(m);updateBuilderCoach()}
-function clearBuild(){if(placedParts.length)pushHistory();placedParts.forEach(p=>scene.remove(p));placedParts.length=0;intersectables.length=0;intersectables.push(plane);selectPlaced(null);toast('組み立てをリセットしました');updateBuilderCoach()}
-function animateBuild(){if(mode!=='BUILD')return;animationFrameId=requestAnimationFrame(animateBuild);renderer.render(scene,camera)}
-let pointers=new Map(),gestureStartDist=0,gestureStartRadius=0,drag=false,last={x:0,y:0},twoFingerUsed=false,lastMid=null;
-function bindBuildGestures(){
- renderer.domElement.addEventListener('pointerdown',e=>{if(mode!=='BUILD')return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});renderer.domElement.setPointerCapture(e.pointerId);if(pointers.size===1){drag=false;twoFingerUsed=false;last={x:e.clientX,y:e.clientY};const hit=partHit(e.clientX,e.clientY);movingPlaced=hit?hit.object:null;moveStartPos=movingPlaced?movingPlaced.position.clone():null;if(movingPlaced)selectPlaced(movingPlaced)}else if(pointers.size===2){twoFingerUsed=true;movingPlaced=null;const a=[...pointers.values()];gestureStartDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);gestureStartRadius=cameraRadius;lastMid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2}}});
- renderer.domElement.addEventListener('pointermove',e=>{if(mode!=='BUILD'||!pointers.has(e.pointerId))return;pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  if(pointers.size===2){twoFingerUsed=true;movingPlaced=null;const a=[...pointers.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y),mid={x:(a[0].x+a[1].x)/2,y:(a[0].y+a[1].y)/2};if(d>10)cameraRadius=Math.max(.8,Math.min(12,gestureStartRadius*(gestureStartDist/d)));if(lastMid){const dx=mid.x-lastMid.x,dy=mid.y-lastMid.y,scale=cameraRadius*.0018;const right=new THREE.Vector3();camera.getWorldDirection(right);right.cross(camera.up).normalize();const up=new THREE.Vector3(0,1,0);target.addScaledVector(right,-dx*scale);target.addScaledVector(up,dy*scale);target.x=Math.max(-6,Math.min(6,target.x));target.y=Math.max(0,Math.min(6,target.y));target.z=Math.max(-6,Math.min(6,target.z));}lastMid=mid;updateCamera();return;}
-  const dx=e.clientX-last.x,dy=e.clientY-last.y;if(Math.hypot(dx,dy)>4)drag=true;if(movingPlaced){if(drag){if(!movingPlaced.userData._historyPushed){pushHistory();movingPlaced.userData._historyPushed=true}const p=dragTarget(e.clientX,e.clientY,movingPlaced);if(p){movingPlaced.position.set(p.x,p.y,p.z);selectPlaced(movingPlaced)}}return;}
-  if(drag){cameraTheta-=dx*.005;cameraPhi=Math.max(.12,Math.min(Math.PI/2-.05,cameraPhi-dy*.005));updateCamera();last={x:e.clientX,y:e.clientY}}const hits=screenRay(e.clientX,e.clientY);if(hits.length&&previewMesh){const p=snap(hits[0]);previewMesh.position.set(p.x,p.y,p.z)}});
- renderer.domElement.addEventListener('pointerup',e=>{if(mode!=='BUILD')return;const wasSingle=pointers.size===1;pointers.delete(e.pointerId);if(wasSingle&&!twoFingerUsed){if(movingPlaced){if(!drag)selectPlaced(movingPlaced);if(movingPlaced.userData)movingPlaced.userData._historyPushed=false;updateBuilderCoach()}else if(!drag){place(e.clientX,e.clientY)}}movingPlaced=null;moveStartPos=null;if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}else if(pointers.size===1){const a=[...pointers.values()][0];last={x:a.x,y:a.y};drag=true}});
- renderer.domElement.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);movingPlaced=null;if(pointers.size===0){drag=false;twoFingerUsed=false;lastMid=null}});
- renderer.domElement.addEventListener('wheel',e=>{if(mode!=='BUILD')return;e.preventDefault();cameraRadius=Math.max(.8,Math.min(12,cameraRadius+e.deltaY*.003));updateCamera()},{passive:false})
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); $(b.dataset.tab).classList.add('active');
+});
+
+function calcBuilder(){
+  const dry=+$('dry').value, fuel=+$('fuel').value, isp=+$('isp').value, stages=+$('stages').value;
+  $('dryOut').textContent=dry.toFixed(1)+' t';
+  $('fuelOut').textContent=fuel.toFixed(1)+' t';
+  $('ispOut').textContent=isp.toFixed(0)+' s';
+  $('stageOut').textContent=stages+' 段';
+  const m0=dry+fuel, m1=dry;
+  builderDv = fuel>0 ? isp*G0*Math.log(m0/m1)/1000 : 0;
+  $('dvOut').textContent=builderDv.toFixed(2);
+  let t = builderDv >= 2.95 ? '火星へ向かうための速度変化を作れる可能性があります。' : '火星への遷移に使う約2.95 km/sより小さい値です。';
+  $('judgeText').textContent=t;
 }
-function buildCounts(){const c={};placedParts.forEach(p=>c[p.userData.type]=(c[p.userData.type]||0)+1);return c}
-function buildEstimate(c){const dry=500+(c.command||0)*350+(c.body_block||0)*300+(c.fuel_engine||0)*500+(c.fairing||0)*120+(c.rcs||0)*80+(c.landing_gear||0)*120+(c.satellite||0)*250+(c.fin||0)*50+Object.keys(c).filter(k=>k.startsWith('decoupler')).reduce((a,k)=>a+c[k]*60,0);const fuel=(c.fuel||0)*1200+(c.fuel_engine||0)*1800;return{dry,fuel,total:dry+fuel}}
-function coachButton(type,label){const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>selectPart(type);return b}
-function updateBuilderCoach(selectedType){const msg=$('coach-message'),st=$('coach-status'),next=$('coach-next');if(!msg||!st||!next)return;const c=buildCounts(),e=buildEstimate(c),parts=placedParts.length;next.innerHTML='';$('coach-parts').textContent=parts+'個';$('coach-mass').textContent=e.total.toLocaleString()+' kg';const hasCmd=!!c.command,hasEng=!!c.fuel_engine,hasFuel=(c.fuel||0)+(c.fuel_engine||0)>0,hasSep=Object.keys(c).some(k=>k.startsWith('decoupler')&&c[k]>0);let text='',status='',recommend=[];
- if(!hasCmd){status='STEP 1';text='まずは<b>司令船</b>を1つ置こう。ロケットの頭・司令室になる必須パーツです。';recommend=[['command','① 司令船を選ぶ']];}
- else if(!hasEng){status='STEP 2';text='司令船OK！ 次は<b>燃料+エンジン</b>。ロケットを加速させる心臓部で、発射には必須です。';recommend=[['fuel_engine','② エンジンを置く']];}
- else if((c.fuel||0)<1){status='STEP 3';text='発射できる最低条件はそろいました。次は<b>燃料タンク</b>を足して、どれだけ速度を変えられるか考えよう。燃料は増えるほど有利ですが、重さも増えます。';recommend=[['fuel','③ 燃料を追加']];}
- else if(!hasSep){status='STEP 4';text='いい形です。自由研究なら<b>第1分離</b>を入れると「使い終わった部分を捨てて軽くする」多段式ロケットを試せます。';recommend=[['decoupler1','④ 第1分離を入れる'],['satellite','人工衛星を載せる']];}
- else {status='研究OK';text='<b>研究できる機体になりました。</b> 次は「この機体で火星研究へ」で、機体の重さ・燃料・段数をツィオルコフスキーの式につなげ、火星へ届く条件を比較できます。変える条件は1回に1つがおすすめ。';recommend=[['rcs','姿勢制御を追加'],['satellite','人工衛星を追加']];}
- if(selectedType&&PART_INFO[selectedType]){const i=PART_INFO[selectedType];text+='<br><span style="color:#94a3b8">選択中：<b>'+i[0]+'</b> — '+i[1]+'</span>';}
- st.textContent=status;$('coach-ready').textContent=(hasCmd&&hasEng)?(hasSep?'研究OK':'発射OK'):'未完';msg.innerHTML=text;recommend.forEach(r=>next.appendChild(coachButton(r[0],r[1])));
+['dry','fuel','isp','stages'].forEach(id=>$(id).oninput=calcBuilder);
+$('resetBuilder').onclick=()=>{ $('dry').value=15;$('fuel').value=85;$('isp').value=450;$('stages').value=2;calcBuilder(); };
+
+const missions={
+  perseverance:{name:'Perseverance',note:'ローバー 1,025 kg／Atlas V 541。探査機重量の参考値です。'},
+  curiosity:{name:'Curiosity',note:'ローバー 899 kg／Atlas V 541。探査機重量の参考値です。'},
+  maven:{name:'MAVEN',note:'周回機：乾燥809 kg、燃料込み2,454 kg／Atlas V 401。'},
+  mro:{name:'MRO',note:'周回機：燃料込み2,180 kg／Atlas V 401。'}
+};
+document.querySelectorAll('.missionBtn').forEach(b=>b.onclick=()=>{$('missionNote').innerHTML='<b>'+missions[b.dataset.mission].name+'</b>：'+missions[b.dataset.mission].note+'<br>※この重量を打ち上げロケット全体の乾燥重量・燃料量にそのまま入れるのではありません。';});
+
+$('sendToSim').onclick=()=>{
+  $('simDv').value=builderDv.toFixed(3);
+  document.querySelector('[data-tab="sim"]').click();
+  $('simMessage').innerHTML='ロケットビルダーの Δv <b>'+builderDv.toFixed(3)+' km/s</b> を読み込みました。先行角と噴射方向を変えて試してください。';
+};
+
+function rk4Step(s, dt){
+  function deriv(z){
+    const r=Math.hypot(z.x,z.y);
+    const ax=-MU*z.x/(r*r*r), ay=-MU*z.y/(r*r*r);
+    return {x:z.vx,y:z.vy,vx:ax,vy:ay};
+  }
+  const k1=deriv(s);
+  const z2={x:s.x+k1.x*dt/2,y:s.y+k1.y*dt/2,vx:s.vx+k1.vx*dt/2,vy:s.vy+k1.vy*dt/2};
+  const k2=deriv(z2);
+  const z3={x:s.x+k2.x*dt/2,y:s.y+k2.y*dt/2,vx:s.vx+k2.vx*dt/2,vy:s.vy+k2.vy*dt/2};
+  const k3=deriv(z3);
+  const z4={x:s.x+k3.x*dt,y:s.y+k3.y*dt,vx:s.vx+k3.vx*dt,vy:s.vy+k3.vy*dt};
+  const k4=deriv(z4);
+  return {
+    x:s.x+dt*(k1.x+2*k2.x+2*k3.x+k4.x)/6,
+    y:s.y+dt*(k1.y+2*k2.y+2*k3.y+k4.y)/6,
+    vx:s.vx+dt*(k1.vx+2*k2.vx+2*k3.vx+k4.vx)/6,
+    vy:s.vy+dt*(k1.vy+2*k2.vy+2*k3.vy+k4.vy)/6
+  };
 }
-function saveRocketForResearch(){
-  if(!placedParts.length){toast('⚠️ 研究に使うロケットを組み立ててください');return false}
-  const counts={};placedParts.forEach(p=>{const t=p.userData.type;counts[t]=(counts[t]||0)+1});
-  const dry=500+(counts.command||0)*350+(counts.body_block||0)*300+(counts.fuel_engine||0)*500+(counts.fairing||0)*120+(counts.rcs||0)*80+(counts.landing_gear||0)*120+(counts.satellite||0)*250+(counts.fin||0)*50+Object.keys(counts).filter(k=>k.startsWith('decoupler')).reduce((a,k)=>a+counts[k]*60,0);
-  const fuel=(counts.fuel||0)*1200+(counts.fuel_engine||0)*1800;
-  const stages=Object.keys(counts).filter(k=>k.startsWith('decoupler')&&counts[k]>0).length;
-  localStorage.setItem('marsRocketBuild',JSON.stringify({counts,dry:Math.min(3000,Math.max(200,Math.round(dry/100)*100)),fuel:Math.min(9000,Math.max(100,Math.round(fuel/100)*100)),stages,createdAt:Date.now()}));
-  return true
+function grade(surfaceKm){
+  if(surfaceKm<=10000)return 'A';
+  if(surfaceKm<=50000)return 'B';
+  if(surfaceKm<=100000)return 'C';
+  if(surfaceKm<=500000)return 'D';
+  if(surfaceKm<=2000000)return 'E';
+  return 'F';
 }
-function goSolarResearch(){if(saveRocketForResearch())location.href='mars-research.html?device='+(deviceMode||guessedDevice())}
-function validateBuild(){if(!placedParts.length)return'ロケットのパーツを配置してください';if(!placedParts.some(p=>p.userData.type==='command'))return'司令船が必要です';if(!placedParts.some(p=>p.userData.type==='fuel_engine'))return'「燃料+エンジン」が必要です';if(nextShipNumber>MAX_SHIPS)return'1号機〜5号機はすべて使用済みです';return null}
-async function launch(){const err=validateBuild();if(err){toast('⚠️ '+err);return}saveRocketForResearch();const ov=$('launch-overlay');document.querySelectorAll('#build-ui,#build-help').forEach(x=>x.classList.add('hidden'));ov.classList.add('show');await new Promise(r=>setTimeout(r,1150));ov.classList.remove('show');spawnShip();enterFlight()}
-function spawnShip(){updateBodyPositions();const earth=bodies.find(b=>b.name==='地球'),n=nextShipNumber++,spawn=earth.angle+(n-1)*.36,r=earth.radius+65;const ex=earth.x+Math.cos(spawn)*r,ey=earth.y+Math.sin(spawn)*r,earthV=earth.orbitSpeed*earth.orbitDist,orb=Math.sqrt((earth.mass*400)/r);const s={id:'ship-'+n,number:n,name:n+'号機',color:COLORS[n-1],x:ex,y:ey,vx:-Math.sin(spawn)*(earthV+orb)*.1,vy:Math.cos(spawn)*(earthV+orb)*.1,angle:spawn+Math.PI/2,fuel:100,integrity:100,altitude:0,status:'ACTIVE',parts:placedParts.map(p=>({type:p.userData.type,x:p.position.x,y:p.position.y,z:p.position.z})),trail:[],thrust:false};ships.push(s);followShipId=s.id;clearBuild();rebuildHUD();toast('🚀 '+s.name+' 軌道投入')}
-function enterFlight(){mode='FLIGHT';cancelAnimationFrame(animationFrameId);renderer.domElement.style.display='none';canvas.style.display='block';$('fleet-hud').style.display='flex';$('global-controls').style.display='flex';resize();overview=false;flightCamera.zoom=.25;if(!flightFrameId)animateFlight()}
-function returnBuilder(){mode='BUILD';cancelAnimationFrame(flightFrameId);flightFrameId=null;canvas.style.display='none';$('fleet-hud').style.display='none';$('global-controls').style.display='none';renderer.domElement.style.display='block';$('build-ui').classList.remove('hidden');$('build-help').classList.remove('hidden');cameraRadius=3.5;cameraTheta=Math.PI/4;cameraPhi=Math.PI/3;updateCamera();updatePreview();animateBuild()}
-function rebuildHUD(){const host=$('fleet-hud');host.innerHTML='';ships.forEach(s=>{const p=document.createElement('div');p.className='ship-panel';p.style.borderColor=s.color;const disabled=s.status!=='ACTIVE'?'disabled':'';p.innerHTML=`<h3 style="color:${s.color}"><span>🚀 ${s.name}</span><span id="status-${s.id}" class="${s.status==='ACTIVE'?'status-ok':'status-lost'}">${s.status==='ACTIVE'?'健全':'LOST'}</span></h3><div class="hud-row"><span>速度</span><span id="vel-${s.id}">-</span></div><div class="hud-row"><span>高度</span><span id="alt-${s.id}">-</span></div><div class="hud-row"><span>燃料</span><span id="fuel-${s.id}">-</span></div><div class="dpad"><span></span><button data-act="left" data-id="${s.id}" ${disabled}>↺</button><span></span><button data-act="hardleft" data-id="${s.id}" ${disabled}>◀</button><button class="thrust" data-act="thrust" data-id="${s.id}" ${disabled}>🔥</button><button data-act="hardright" data-id="${s.id}" ${disabled}>▶</button><span></span><button data-act="right" data-id="${s.id}" ${disabled}>↻</button><span></span></div><div class="hud-btn-row"><button class="hud-btn stage" data-stage="1" data-id="${s.id}" ${disabled}>S1</button><button class="hud-btn stage" data-stage="2" data-id="${s.id}" ${disabled}>S2</button><button class="hud-btn stage" data-stage="3" data-id="${s.id}" ${disabled}>S3</button><button class="hud-btn stage" data-stage="4" data-id="${s.id}" ${disabled}>S4</button><button class="hud-btn stage" data-stage="5" data-id="${s.id}" ${disabled}>S5</button></div><div class="hud-btn-row"><button class="hud-btn follow" data-follow="${s.id}" ${disabled}>🎯 追従</button><button class="hud-btn destruct" data-destruct="${s.id}" ${disabled}>💥 自爆</button></div>`;host.appendChild(p)});bindHUD()}
-function bindHUD(){document.querySelectorAll('[data-act]').forEach(b=>{const id=b.dataset.id,a=b.dataset.act;const down=e=>{e.preventDefault();const s=shipById(id);if(!s||s.status!=='ACTIVE')return;if(a==='thrust')s.thrust=true;else if(a==='left')s.angle-=.08;else if(a==='right')s.angle+=.08;else if(a==='hardleft')s.angle-=.16;else if(a==='hardright')s.angle+=.16};const up=e=>{const s=shipById(id);if(s&&a==='thrust')s.thrust=false};b.addEventListener('pointerdown',down);b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('pointerleave',up)});document.querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>decouple(b.dataset.id,+b.dataset.stage));document.querySelectorAll('[data-follow]').forEach(b=>b.onclick=()=>{followShipId=b.dataset.follow;overview=false;flightCamera.zoom=.25;toast('🎯 '+shipById(followShipId).name+' を追従')});document.querySelectorAll('[data-destruct]').forEach(b=>b.onclick=()=>askDestruct(b.dataset.destruct))}
-function askDestruct(id){const s=shipById(id);if(!s||s.status!=='ACTIVE')return;pendingDestructId=id;$('confirm-text').textContent=`${s.name}を完全に破壊し、運用リストから除外します。元に戻せません。`;$('confirm').classList.add('show')}
-function doDestruct(){const s=shipById(pendingDestructId);$('confirm').classList.remove('show');if(!s||s.status!=='ACTIVE')return;for(let i=0;i<34;i++){const a=Math.random()*Math.PI*2,sp=.15+Math.random()*1.25;debris.push({x:s.x,y:s.y,vx:s.vx+Math.cos(a)*sp,vy:s.vy+Math.sin(a)*sp,life:450+Math.random()*400,size:2+Math.random()*5,color:i%4===0?'#fb923c':'#94a3b8'})}explosions.push({x:s.x,y:s.y,life:40,max:40});s.status='DESTROYED';s.integrity=0;s.thrust=false;s.trail.length=0;if(followShipId===s.id){const next=currentAlive()[0];followShipId=next?next.id:null;overview=!next}rebuildHUD();toast('💥 '+s.name+' 自爆');pendingDestructId=null}
-function decouple(id,stage){const s=shipById(id);if(!s||s.status!=='ACTIVE')return;const target='decoupler'+stage,di=s.parts.findIndex(p=>p.type===target);if(di<0){toast(`⚠️ ${s.name}に第${stage}分離はありません`);return}const y=s.parts[di].y,keep=[];s.parts.forEach(p=>{if(p.y<=y){debris.push({x:s.x+p.x*Math.cos(s.angle)-p.y*Math.sin(s.angle),y:s.y+p.x*Math.sin(s.angle)+p.y*Math.cos(s.angle),vx:s.vx-Math.cos(s.angle)*.04+(Math.random()-.5)*.05,vy:s.vy-Math.sin(s.angle)*.04+(Math.random()-.5)*.05,life:900,size:4,color:'#64748b'})}else keep.push(p)});s.parts=keep;toast(`✂️ ${s.name} 第${stage}分離`) }
-function physics(){for(let st=0;st<SUB_STEPS;st++){bodies.forEach(b=>{if(b.orbitDist){b.angle+=(b.orbitSpeed*.1*.02)/SUB_STEPS;b.x=Math.cos(b.angle)*b.orbitDist;b.y=Math.sin(b.angle)*b.orbitDist}});const sun=bodies[0];currentAlive().forEach(s=>{const dsx=sun.x-s.x,dsy=sun.y-s.y,ds=Math.hypot(dsx,dsy);if(ds>1){const f=sun.mass*80/(ds*ds);s.vx+=dsx/ds*f*.0001/SUB_STEPS;s.vy+=dsy/ds*f*.0001/SUB_STEPS}bodies.slice(1).forEach(b=>{const dx=b.x-s.x,dy=b.y-s.y,d=Math.hypot(dx,dy);if(d>1){const f=b.mass*400/(d*d);s.vx+=dx/d*f*.001/SUB_STEPS;s.vy+=dy/d*f*.001/SUB_STEPS}if(d<b.radius+12)s.integrity=Math.max(0,s.integrity-.25/SUB_STEPS)});if(s.thrust&&s.fuel>0){const a=.014;s.vx+=Math.cos(s.angle)*a/SUB_STEPS;s.vy+=Math.sin(s.angle)*a/SUB_STEPS;s.fuel=Math.max(0,s.fuel-.012/SUB_STEPS)}s.x+=s.vx/SUB_STEPS;s.y+=s.vy/SUB_STEPS;const earth=bodies.find(b=>b.name==='地球'),de=Math.hypot(earth.x-s.x,earth.y-s.y);s.altitude=Math.max(0,Math.floor(de-earth.radius));if(st===0){s.trail.push({x:s.x,y:s.y});if(s.trail.length>300)s.trail.shift()}if(s.integrity<=0){s.status='DESTROYED';explosions.push({x:s.x,y:s.y,life:35,max:35})}});debris.forEach(d=>{d.x+=d.vx/SUB_STEPS;d.y+=d.vy/SUB_STEPS});}debris.forEach(d=>d.life--);debris=debris.filter(d=>d.life>0);explosions.forEach(e=>e.life--);explosions=explosions.filter(e=>e.life>0)}
-function trajectory(s){let x=s.x,y=s.y,vx=s.vx,vy=s.vy,out=[];for(let i=0;i<180;i++){const sun=bodies[0],dx=sun.x-x,dy=sun.y-y,d=Math.hypot(dx,dy);if(d>1){const f=sun.mass*80/(d*d);vx+=dx/d*f*.0001;vy+=dy/d*f*.0001}x+=vx;y+=vy;out.push({x,y})}return out}
-function draw(){ctx.fillStyle='#020617';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.save();ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(flightCamera.zoom,flightCamera.zoom);if(!overview&&followShipId){const f=shipById(followShipId);if(f&&f.status==='ACTIVE')ctx.translate(-f.x,-f.y)}bodies.forEach(b=>{if(b.orbitDist){ctx.strokeStyle='#1e293b';ctx.lineWidth=1.2/flightCamera.zoom;ctx.beginPath();ctx.arc(0,0,b.orbitDist,0,Math.PI*2);ctx.stroke()}ctx.shadowBlur=b.name==='太陽'?40:7;ctx.shadowColor=b.color;ctx.fillStyle=b.color;ctx.beginPath();ctx.arc(b.x,b.y,b.radius,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#94a3b8';ctx.font=`${14/Math.max(.15,flightCamera.zoom)}px sans-serif`;ctx.fillText(b.name,b.x+b.radius+8,b.y+4)});currentAlive().forEach(s=>{if(s.trail.length>1){ctx.strokeStyle=s.color;ctx.lineWidth=3/flightCamera.zoom;ctx.beginPath();ctx.moveTo(s.trail[0].x,s.trail[0].y);for(let i=1;i<s.trail.length;i++)ctx.lineTo(s.trail[i].x,s.trail[i].y);ctx.stroke()}const tr=trajectory(s);ctx.strokeStyle=s.color;ctx.globalAlpha=.6;ctx.setLineDash([6/flightCamera.zoom,7/flightCamera.zoom]);ctx.lineWidth=1.5/flightCamera.zoom;ctx.beginPath();ctx.moveTo(s.x,s.y);tr.forEach(p=>ctx.lineTo(p.x,p.y));ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;ctx.save();ctx.translate(s.x,s.y);ctx.rotate(s.angle);if(s.thrust&&s.fuel>0){ctx.fillStyle='#fb923c';ctx.beginPath();ctx.moveTo(-13,-5);ctx.lineTo(-31-Math.random()*9,0);ctx.lineTo(-13,5);ctx.fill()}ctx.fillStyle=s.color;ctx.beginPath();ctx.moveTo(18,0);ctx.lineTo(-11,-9);ctx.lineTo(-7,0);ctx.lineTo(-11,9);ctx.closePath();ctx.fill();ctx.restore();ctx.fillStyle=s.color;ctx.font='bold 13px sans-serif';ctx.fillText(s.name,s.x+18,s.y-15)});debris.forEach(d=>{ctx.fillStyle=d.color;ctx.beginPath();ctx.arc(d.x,d.y,d.size,0,Math.PI*2);ctx.fill()});explosions.forEach(e=>{const k=1-e.life/e.max;ctx.globalAlpha=Math.max(0,e.life/e.max);ctx.strokeStyle='#fb923c';ctx.lineWidth=6/flightCamera.zoom;ctx.beginPath();ctx.arc(e.x,e.y,10+k*80,0,Math.PI*2);ctx.stroke();ctx.fillStyle='#fef08a';ctx.beginPath();ctx.arc(e.x,e.y,Math.max(2,(1-k)*28),0,Math.PI*2);ctx.fill();ctx.globalAlpha=1});ctx.restore()}
-function updateHUD(){ships.forEach(s=>{const ve=$('vel-'+s.id),al=$('alt-'+s.id),fu=$('fuel-'+s.id),st=$('status-'+s.id);if(ve)ve.textContent=(Math.hypot(s.vx,s.vy)*120).toFixed(2)+' km/s';if(al)al.textContent=s.altitude+' km';if(fu)fu.textContent=s.fuel.toFixed(1)+' %';if(st&&s.status==='ACTIVE'){st.className=s.integrity>60?'status-ok':s.integrity>30?'status-warn':'status-bad';st.textContent=s.integrity>60?'健全':s.integrity>30?'注意':'危険'}})}
-let lastStatusKey='';function animateFlight(){if(mode!=='FLIGHT'){flightFrameId=null;return}flightFrameId=requestAnimationFrame(animateFlight);physics();const key=ships.map(s=>s.status).join('|');if(key!==lastStatusKey){lastStatusKey=key;rebuildHUD()}updateHUD();draw()}
-function resize(){if(renderer&&mode==='BUILD'){camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)}canvas.width=Math.floor(innerWidth*Math.min(devicePixelRatio,2));canvas.height=Math.floor(innerHeight*Math.min(devicePixelRatio,2));canvas.style.width=innerWidth+'px';canvas.style.height=innerHeight+'px';ctx.setTransform(Math.min(devicePixelRatio,2),0,0,Math.min(devicePixelRatio,2),0,0);canvas.width=innerWidth*Math.min(devicePixelRatio,2);canvas.height=innerHeight*Math.min(devicePixelRatio,2)}
-function bindGlobal(){const pt=$('panel-toggle');$('delete-selected-btn').onclick=deleteSelected;$('undo-btn').onclick=undoBuild;$('edit-mode-btn').onclick=()=>{if(selectedPlaced){selectPlaced(null);toast('選択を解除しました')}else toast('配置済みパーツをタップしてください')};if(pt)pt.onclick=()=>{const ui=$('build-ui'),on=ui.classList.toggle('builder-collapsed');pt.textContent=on?'▲ 操作盤を開く':'▼ 小さくする'};$('launch-btn').onclick=launch;$('reset-btn').onclick=clearBuild;$('research-from-builder').onclick=goSolarResearch;if($('research-btn'))$('research-btn').onclick=()=>{const live=currentAlive()[0];if(live){const counts={};live.parts.forEach(p=>counts[p.type]=(counts[p.type]||0)+1);localStorage.setItem('marsRocketBuild',JSON.stringify({counts,dry:1000,fuel:3000,stages:Object.keys(counts).filter(k=>k.startsWith('decoupler')).length,createdAt:Date.now()}));location.href='mars-research.html?device='+(deviceMode||guessedDevice())}else goSolarResearch()};$('return-btn').onclick=returnBuilder;$('overview-btn').onclick=()=>{overview=!overview;flightCamera.zoom=overview?.055:.25;$('overview-btn').textContent=overview?'🎯 追従ビュー':'🪐 全体ビュー'};$('confirm-cancel').onclick=()=>{$('confirm').classList.remove('show');pendingDestructId=null};$('confirm-yes').onclick=doDestruct;window.addEventListener('resize',resize);canvas.addEventListener('wheel',e=>{if(mode!=='FLIGHT')return;e.preventDefault();flightCamera.zoom*=e.deltaY>0?.9:1.1;flightCamera.zoom=Math.max(.008,Math.min(2.5,flightCamera.zoom))},{passive:false});let pinch=new Map(),startDist=0,startZoom=.25;canvas.addEventListener('pointerdown',e=>{pinch.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch.size===2){const a=[...pinch.values()];startDist=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);startZoom=flightCamera.zoom}});canvas.addEventListener('pointermove',e=>{if(!pinch.has(e.pointerId))return;pinch.set(e.pointerId,{x:e.clientX,y:e.clientY});if(pinch.size===2){const a=[...pinch.values()],d=Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y);flightCamera.zoom=Math.max(.008,Math.min(2.5,startZoom*(d/startDist)))}});['pointerup','pointercancel'].forEach(ev=>canvas.addEventListener(ev,e=>pinch.delete(e.pointerId)));window.addEventListener('keydown',e=>{if(mode!=='FLIGHT'||!followShipId)return;const s=shipById(followShipId);if(!s||s.status!=='ACTIVE')return;if(e.key==='ArrowLeft')s.angle-=.12;if(e.key==='ArrowRight')s.angle+=.12;if(e.key==='ArrowUp'||e.code==='Space')s.thrust=true});window.addEventListener('keyup',e=>{if(!followShipId)return;const s=shipById(followShipId);if(s&&(e.key==='ArrowUp'||e.code==='Space'))s.thrust=false})}
-$('guide-open').onclick=()=>$('guide-modal').classList.add('show');
-$('guide-close').onclick=()=>$('guide-modal').classList.remove('show');
-$('guide-modal').addEventListener('click',e=>{if(e.target===$('guide-modal'))$('guide-modal').classList.remove('show')});
-const boot=$('boot-status');if(boot){boot.textContent='✅ 起動OK — PC / スマホ選択対応版';setTimeout(()=>boot.style.display='none',900)}
-initDeviceChoice();buildPartButtons();init3D();bindBuildGestures();bindGlobal();updateBodyPositions();updateBuilderCoach();
-setTimeout(()=>{if(!sessionStorage.getItem('rocketGuideSeen')){$('guide-modal').classList.add('show');sessionStorage.setItem('rocketGuideSeen','1')}},250);
-})();
+function simulate(phaseDeg,dv,dirDeg,durationDays){
+  const phase=phaseDeg*Math.PI/180;
+  const dir=dirDeg*Math.PI/180;
+  let s={x:rE,y:0,vx:-dv*Math.sin(dir),vy:vE+dv*Math.cos(dir)};
+  const dt=3*3600; // 3 hours
+  const steps=Math.floor(durationDays*86400/dt);
+  let best=Infinity,bestDay=0,bestMars={x:0,y:0}, path=[], marsPath=[];
+  const wM=vM/rM;
+  for(let i=0;i<=steps;i++){
+    const t=i*dt;
+    const ma=phase+wM*t;
+    const mx=rM*Math.cos(ma), my=rM*Math.sin(ma);
+    const d=Math.hypot(s.x-mx,s.y-my);
+    if(d<best){best=d;bestDay=t/86400;bestMars={x:mx,y:my};}
+    if(i%16===0){path.push([s.x,s.y]);marsPath.push([mx,my]);}
+    s=rk4Step(s,dt);
+  }
+  const surface=Math.max(0,best-RMARS);
+  return {surface,bestDay,path,marsPath,phaseDeg,dv,dirDeg,durationDays,grade:grade(surface)};
 }
+
+function drawScene(canvas,res,progress=1){
+  const ctx=canvas.getContext('2d'), W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const g=ctx.createLinearGradient(0,0,0,H);g.addColorStop(0,'#020713');g.addColorStop(1,'#061a33');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#ffffff66';
+  for(let i=0;i<130;i++){let x=(i*197)%W,y=(i*83)%H;ctx.fillRect(x,y,1.2,1.2);}
+  const cx=W/2,cy=H/2,scale=Math.min(W,H)/(2*1.75*rM);
+  const xy=(x,y)=>[cx+x*scale,cy-y*scale];
+  ctx.strokeStyle='#24599a';ctx.lineWidth=2;ctx.beginPath();ctx.arc(cx,cy,rE*scale,0,Math.PI*2);ctx.stroke();
+  ctx.strokeStyle='#a3482b';ctx.beginPath();ctx.arc(cx,cy,rM*scale,0,Math.PI*2);ctx.stroke();
+  ctx.fillStyle='#ffbd35';ctx.beginPath();ctx.arc(cx,cy,16,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='15px sans-serif';ctx.fillText('太陽',cx+20,cy+5);
+  const e=xy(rE,0);ctx.fillStyle='#38a1ff';ctx.beginPath();ctx.arc(e[0],e[1],10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText('地球',e[0]+13,e[1]+5);
+  const m0a=res.phaseDeg*Math.PI/180, m0=xy(rM*Math.cos(m0a),rM*Math.sin(m0a));ctx.fillStyle='#e95e2a';ctx.beginPath();ctx.arc(m0[0],m0[1],9,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.fillText('火星(出発時)',m0[0]+12,m0[1]+4);
+  if(res.path){
+    const n=Math.max(2,Math.floor(res.path.length*progress));
+    ctx.strokeStyle='#f5f6ff';ctx.lineWidth=2;ctx.beginPath();
+    res.path.slice(0,n).forEach((p,i)=>{let q=xy(p[0],p[1]);i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);});ctx.stroke();
+    const p=res.path[Math.min(n-1,res.path.length-1)], q=xy(p[0],p[1]);
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(q[0],q[1],6,0,Math.PI*2);ctx.fill();
+    const mp=res.marsPath[Math.min(n-1,res.marsPath.length-1)], mq=xy(mp[0],mp[1]);
+    ctx.fillStyle='#e95e2a';ctx.beginPath();ctx.arc(mq[0],mq[1],9,0,Math.PI*2);ctx.fill();
+  }
+}
+function runLaunch(){
+  const phase=+$('phase').value,dv=+$('simDv').value,dir=+$('dir').value,dur=+$('duration').value;
+  simResult=simulate(phase,dv,dir,dur);
+  drawScene($('space'),simResult,1);
+  $('daysOut').textContent=simResult.bestDay.toFixed(1)+' 日';
+  $('closestOut').textContent=Math.round(simResult.surface).toLocaleString()+' km';
+  $('gradeOut').innerHTML='<span class="score '+simResult.grade+'" style="display:inline-block;min-width:42px">'+simResult.grade+'</span>';
+  $('simMessage').innerHTML='最も近づいたのは <b>'+simResult.bestDay.toFixed(1)+'日後</b>。火星表面まで約 <b>'+Math.round(simResult.surface).toLocaleString()+' km</b>、評価は <b>'+simResult.grade+'</b> です。';
+}
+$('launchBtn').onclick=runLaunch;
+$('bestBtn').onclick=()=>{$('phase').value=44.34;$('simDv').value=2.945;$('dir').value=0;$('duration').value=350;$('simMessage').textContent='お手本値をセットしました。打ち上げてみよう。';};
+
+$('recordBtn').onclick=()=>{
+  if(!simResult){$('simMessage').textContent='先に打ち上げて結果を出してください。';return;}
+  logs.push({...simResult});renderLog();
+};
+function renderLog(){
+  const tb=$('logTable').querySelector('tbody');tb.innerHTML='';
+  logs.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${r.phaseDeg.toFixed(1)}°</td><td>${r.dv.toFixed(3)} km/s</td><td>${r.dirDeg.toFixed(0)}°</td><td>${Math.round(r.surface).toLocaleString()} km</td><td><b>${r.grade}</b></td>`;tb.appendChild(tr);});
+}
+$('clearLog').onclick=()=>{logs=[];renderLog();};
+$('csvBtn').onclick=()=>{
+  const rows=[['#','先行角(deg)','Delta-v(km/s)','方向(deg)','最接近距離(km)','評価'],...logs.map((r,i)=>[i+1,r.phaseDeg,r.dv,r.dirDeg,Math.round(r.surface),r.grade])];
+  const csv='\ufeff'+rows.map(r=>r.join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='火星探査_実験記録.csv';a.click();URL.revokeObjectURL(a.href);
+};
+
+const modal=$('demoModal');let demoAnim=null;
+$('demoBtn').onclick=()=>{modal.classList.add('open');startDemo();};
+$('closeDemo').onclick=()=>{modal.classList.remove('open');cancelAnimationFrame(demoAnim);};
+$('demoReplay').onclick=startDemo;
+$('useDemo').onclick=()=>{modal.classList.remove('open');$('phase').value=44.34;$('simDv').value=2.945;$('dir').value=0;$('duration').value=350;runLaunch();};
+function startDemo(){
+  cancelAnimationFrame(demoAnim);
+  const r=simulate(44.34,2.945,0,300);let st=null;
+  const canvas=$('demoCanvas');
+  function frame(ts){
+    if(!st)st=ts;const p=Math.min(1,(ts-st)/6500);
+    drawScene(canvas,r,p);
+    const idx=Math.min(3,Math.floor(p*4));
+    ['ds1','ds2','ds3','ds4'].forEach((id,i)=>$(id).classList.toggle('on',i===idx));
+    const texts=[
+      '① 打ち上げる時、火星を地球より約44°先に置きます。',
+      '② 地球がすでに持っている公転速度に、約2.94 km/sの速度変化を加えます。',
+      '③ 加速方向は地球の進行方向。探査機の太陽まわりの軌道が外側へ広がります。',
+      '④ 約259日後、探査機と火星が同じ場所へ近づく「待ち合わせ」をねらいます。'
+    ];$('demoText').textContent=texts[idx];
+    if(p<1)demoAnim=requestAnimationFrame(frame);
+  }
+  demoAnim=requestAnimationFrame(frame);
+}
+calcBuilder();
+simResult=simulate(44.34,2.945,0,350);drawScene($('space'),simResult,0.02);simResult=null;
 </script>
 </body>
 </html>
