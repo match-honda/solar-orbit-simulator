@@ -159,10 +159,10 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;borde
   <h3 style="margin-top:13px">② Δv</h3>
   <div class="control">
    <div class="kpi" style="padding:12px;margin-bottom:9px">
-    <div class="small">ロケットビルダーから引き継いだ Δv</div>
-    <div class="num" id="simDvDisplay" style="font-size:38px">2.945</div><b>km/s</b>
+    <div class="small"><b>ロケットビルダー連携値</b>（自動入力・通常は変更不可）</div>
+    <div class="num" id="simDvDisplay" style="font-size:38px">未設定</div><b id="simDvUnit"></b>
    </div>
-   <input id="simDv" type="number" min="0" max="12" step=".01" value="2.945" readonly style="background:#eef3f8;color:#54657a">
+   <input id="simDv" type="number" min="0" max="12" step=".01" value="" readonly placeholder="ロケットビルダーから読み込み" style="background:#eef3f8;color:#54657a">
    <label style="margin-top:10px;justify-content:flex-start;align-items:center;gap:8px;font-weight:700">
     <input id="overrideDv" type="checkbox" style="width:20px;height:20px">
     実験用にΔvを手動で上書きする
@@ -254,29 +254,43 @@ function freeCalc(){
 
 
 function syncBuilderDvToSim(){
- currentBuilderDv = builderMode==='real' ? parseFloat($('realDv').textContent) : parseFloat($('freeDv').textContent);
+ const sourceEl = builderMode==='real' ? $('realDv') : $('freeDv');
+ const parsed = parseFloat(sourceEl.textContent);
+ if(!Number.isFinite(parsed) || parsed<=0){
+   currentBuilderDv = null;
+   $('simDv').value='';
+   $('simDvDisplay').textContent='未設定';
+   $('simDvUnit').textContent='';
+   $('liveText').textContent='ロケットビルダーでΔvを計算してください';
+   return false;
+ }
+ currentBuilderDv = parsed;
  $('simDv').value=currentBuilderDv.toFixed(3);
  $('simDvDisplay').textContent=currentBuilderDv.toFixed(3);
+ $('simDvUnit').textContent='km/s';
  $('simDv').readOnly=true;
  $('simDv').style.background='#eef3f8';
  $('simDv').style.color='#54657a';
  $('overrideDv').checked=false;
- $('liveText').textContent=`ロケットビルダーのΔv ${currentBuilderDv.toFixed(3)} km/s を読み込みました`;
+ $('liveText').textContent=`ロケットビルダーから Δv ${currentBuilderDv.toFixed(3)} km/s を受け取りました`;
+ return true;
 }
 $('overrideDv').addEventListener('change',()=>{
  const on=$('overrideDv').checked;
  $('simDv').readOnly=!on;
  $('simDv').style.background=on?'#fff':'#eef3f8';
  $('simDv').style.color=on?'var(--ink)':'#54657a';
- if(!on){
+ if(!on && Number.isFinite(currentBuilderDv)){
   $('simDv').value=currentBuilderDv.toFixed(3);
   $('simDvDisplay').textContent=currentBuilderDv.toFixed(3);
+  $('simDvUnit').textContent='km/s';
  }
 });
 $('simDv').addEventListener('input',()=>{
  if($('overrideDv').checked){
   const v=Math.max(0,Math.min(12,parseFloat($('simDv').value)||0));
   $('simDvDisplay').textContent=v.toFixed(3);
+  $('simDvUnit').textContent='km/s';
  }
 });
 
@@ -400,8 +414,14 @@ function animateLaunch(r){
  animId=requestAnimationFrame(frame);
 }
 $('launchBtn').addEventListener('click',()=>{
- const phase=+$('phase').value,dv=Math.max(0,Math.min(12,+$('simDv').value||0));
- result=simulate(phase,dv,chosenDir,550);$('closestOut').textContent='計算中…';$('gradeOut').textContent='—';animateLaunch(result);
+ const raw=parseFloat($('simDv').value);
+ if(!Number.isFinite(raw) || raw<=0){
+   $('liveText').textContent='先にロケットビルダーでロケットを作り、「このロケットで火星シミュレーションへ」を押してください';
+   return;
+ }
+ const phase=+$('phase').value,dv=Math.max(0,Math.min(12,raw));
+ result=simulate(phase,dv,chosenDir,550);
+ $('closestOut').textContent='計算中…';$('gradeOut').textContent='—';animateLaunch(result);
 });
 $('demoSet').addEventListener('click',()=>{
  $('phase').value='44.34';
@@ -411,13 +431,16 @@ $('demoSet').addEventListener('click',()=>{
  if($('overrideDv').checked){
   $('simDv').value='2.945';
   $('simDvDisplay').textContent='2.945';
-  $('liveText').textContent='お手本条件：44.3° / Δv 2.945 km/s / 0°';
+  $('simDvUnit').textContent='km/s';
+  $('liveText').textContent='手動実験：お手本Δv 2.945 km/sを入力しました';
+ }else if(Number.isFinite(currentBuilderDv)){
+  $('liveText').textContent=`位置と方向だけお手本に戻しました。Δvはビルダーの ${currentBuilderDv.toFixed(3)} km/s のままです`;
  }else{
-  $('liveText').textContent=`お手本の位置と方向に戻しました。Δvはロケットビルダーの ${currentBuilderDv.toFixed(3)} km/s を使用`;
+  $('liveText').textContent='位置と方向をお手本に戻しました。Δvはまだ未設定です';
  }
 });
 $('toSimReal').addEventListener('click',()=>{
- syncBuilderDvToSim();
+ if(!syncBuilderDvToSim()) return;
  document.querySelector('[data-tab="sim"]').click();
  $('phase').value='44.34';
  chosenDir=0;
@@ -429,8 +452,7 @@ $('recordBtn').addEventListener('click',()=>{
  logs.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${r.phaseDeg.toFixed(1)}°</td><td>${r.dv.toFixed(3)}</td><td>${r.dirDeg}°</td><td>${Math.round(r.surface).toLocaleString()} km</td><td><b>${r.grade}</b></td>`;tb.appendChild(tr)});
 });
 $('clearBtn').addEventListener('click',()=>{logs=[];$('log').querySelector('tbody').innerHTML=''});
-$('simDvDisplay').textContent=$('simDv').value;
-const initial=simulate(44.34,2.945,0,550);draw($('space'),initial,.02);
+const initial=simulate(44.34,2.945,0,550);draw($('space'),initial,.02);$('liveText').textContent='プレビュー表示。実験するにはロケットビルダーからΔvを読み込んでください';
 </script>
 </body>
 </html>
