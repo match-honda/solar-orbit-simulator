@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>火星探査機シミュレーション</title>
+<style>
+:root{
+ --navy:#082b5c;--blue:#1769d2;--teal:#138c92;--orange:#ff7900;--ink:#102746;
+ --muted:#64748b;--line:#d6e0ed;--bg:#f5f8fc;--card:#fff;--green:#15945b;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;color:var(--ink);background:var(--bg)}
+header{position:sticky;top:0;z-index:10;background:var(--navy);color:#fff;padding:13px 16px;box-shadow:0 2px 10px #0002}
+.head{max-width:1180px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{font-size:clamp(18px,2.5vw,28px);font-weight:900}.tag{font-size:12px;border:1px solid #ffffff55;border-radius:999px;padding:5px 9px}
+main{max-width:1180px;margin:auto;padding:18px 14px 50px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 8px 25px #15365a0c}
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}
+h1{font-size:clamp(30px,5vw,54px);line-height:1.08;margin:3px 0 12px}h2{font-size:clamp(23px,3.2vw,35px);margin:0 0 12px}h3{margin:0 0 9px}
+.orange{color:var(--orange)}.teal{color:var(--teal)}
+.note{border:1px solid #ffd095;background:#fff6e8;border-radius:13px;padding:11px 13px;line-height:1.55}
+.info{border:1px solid #cbe1ed;background:#effafb;border-radius:13px;padding:11px 13px;line-height:1.55}
+.spaceHero{border-radius:16px;background:radial-gradient(circle at 74% 42%,#b94a25 0 9%,#6a2119 10% 12%,transparent 13%),radial-gradient(circle at 25% 64%,#287fcb 0 6%,#153d73 7% 8%,transparent 9%),radial-gradient(circle at 45% 48%,#ffc74c 0 4%,#f07800 5% 6%,transparent 7%),linear-gradient(140deg,#031125,#091a32);min-height:225px;position:relative;overflow:hidden}
+.spaceHero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(#fff 1px,transparent 1px);background-size:27px 27px;opacity:.22}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.tab{border:1px solid var(--line);background:#fff;padding:10px 14px;border-radius:999px;font-weight:900;color:var(--navy);cursor:pointer}.tab.active{background:var(--navy);color:#fff}
+.section{display:none}.section.active{display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.modebar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.mode{flex:1;min-width:140px;border:1px solid #c6d6e8;border-radius:11px;padding:11px;background:#f7faff;font-weight:900;cursor:pointer}.mode.active{background:var(--blue);color:#fff}
+.realMass{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0}.massBox{background:#f5f8fc;border:1px solid var(--line);border-radius:12px;padding:11px;text-align:center}.massBox b{display:block;font-size:24px;margin-top:4px}
+.rocketStack{display:flex;flex-direction:column;gap:7px;margin:14px 0}.stage{border-radius:12px;padding:11px 12px;border:1px solid var(--line);display:grid;grid-template-columns:1.1fr .8fr .8fr;gap:7px;align-items:center}.srb{background:#fff5e9}.core{background:#eef6ff}.centaur{background:#edfafa}.payload{background:#f7f1ff}
+.control{padding:11px 0;border-bottom:1px dashed var(--line)}.control:last-child{border-bottom:0}
+label{font-weight:900;display:flex;justify-content:space-between;gap:7px;margin-bottom:7px}input[type=range]{width:100%;accent-color:var(--blue)}input[type=number],select{width:100%;font-size:16px;padding:10px;border:1px solid #b9c9dd;border-radius:9px;background:#fff;color:var(--ink)}
+.small{font-size:12.5px;line-height:1.5;color:var(--muted)}
+.kpi{background:#f1f7ff;border:1px solid #c8dbf2;border-radius:14px;text-align:center;padding:14px}.kpi .num{font-size:clamp(36px,5vw,56px);font-weight:950;color:var(--blue);line-height:1.05}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-size:16px;font-weight:900;cursor:pointer;min-height:46px}.btn.primary{background:var(--blue);color:#fff}.btn.orange{background:var(--orange);color:#fff}.btn.teal{background:var(--teal);color:#fff}.btn.ghost{background:#fff;border:1px solid #b9cbe0;color:var(--navy)}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:10px}
+.simLayout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,.7fr);gap:15px}
+.viewer{min-width:0}.screenWrap{position:relative}.screenWrap canvas{width:100%;height:auto;display:block;background:#030c19;border-radius:14px;border:1px solid #132641}
+.viewToggle{display:flex;gap:7px;margin-bottom:9px}.viewBtn{flex:1;border:1px solid #c5d3e4;background:#fff;color:var(--navy);border-radius:10px;padding:10px;font-weight:900;cursor:pointer}.viewBtn.active{background:var(--navy);color:#fff}
+.cameraHint{font-size:12px;color:var(--muted);margin:4px 0 8px}
+.launchBar{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;margin-top:10px}.launchBar .btn{font-size:19px;padding:13px 20px}
+.live{font-weight:900;color:var(--teal)}
+.resultGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:9px}.result{border:1px solid var(--line);background:#f7f9fc;border-radius:10px;padding:9px;text-align:center}.result b{display:block;font-size:19px;margin-top:2px}
+.dvPresetGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}
+.dvPresetBtn{border:1px solid #c6d3e3;background:#fff;border-radius:10px;text-align:left;padding:10px;cursor:pointer;min-height:68px;color:var(--ink)}
+.dvPresetBtn.selected{border:2px solid var(--blue);background:#edf5ff}
+.dvPresetBtn:disabled{opacity:.38;background:#eef1f5;cursor:not-allowed}
+.dvPresetTitle{font-weight:900}.dvPresetDesc{font-size:11.5px;color:var(--muted);margin-top:3px}
+.dirGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.dirBtn{border:1px solid #c6d3e3;background:#fff;border-radius:10px;text-align:left;padding:9px;cursor:pointer;min-height:67px;color:var(--ink)}.dirBtn.selected{border:2px solid var(--blue);background:#edf5ff}.dirTitle{font-weight:900}.arrow{font-size:21px;display:inline-block;width:28px;text-align:center}.dirDesc{font-size:11.5px;color:var(--muted);margin-top:3px}
+.dirDiagram{display:flex;align-items:center;justify-content:center;gap:14px;background:#06152a;color:#fff;border-radius:12px;padding:13px;margin-bottom:10px}.earthDot{width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#63c6ff,#1768ad 60%,#093a6a);display:grid;place-items:center;font-size:12px}.dirArrow{font-size:42px;color:#ff9b28;transform:rotate(0deg);transition:transform .25s}.axisNote{font-size:12px;line-height:1.5}
+.scoreRow{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:8px}.score{color:#fff;text-align:center;border-radius:8px;padding:7px 3px;font-weight:900}.A{background:#158d54}.B{background:#58a62d}.C{background:#e6a600}.D{background:#ed7b13}.E{background:#df4938}.F{background:#a92331}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left}th{background:#eef5ff}
+.hidden{display:none!important}
+@media(max-width:820px){
+ .hero,.grid2,.grid3,.simLayout{grid-template-columns:1fr}.realMass{grid-template-columns:1fr 1fr}.stage{grid-template-columns:1fr 1fr}.dirGrid{grid-template-columns:1fr 1fr}.launchBar{grid-template-columns:1fr}.launchBar .btn{width:100%}.resultGrid{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:430px){.dirGrid,.dvPresetGrid{grid-template-columns:1fr}.scoreRow{grid-template-columns:repeat(3,1fr)}.realMass{grid-template-columns:1fr}.resultGrid{grid-template-columns:1fr}.stage{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="head"><div class="brand">🚀 火星探査機シミュレーション</div><div class="tag">理科自由研究・プレイ版</div></div></header>
+<main>
+<section class="hero">
+ <div class="card">
+  <div class="small teal" style="font-weight:900">研究の問い</div>
+  <h1>どんな条件なら<br><span class="orange">火星に最も近づける？</span></h1>
+  <div class="note"><b>Δv（デルタ・ブイ）</b>＝速度の変化量。このアプリでは <b>km/s（秒速何km）</b> で表示します。</div>
+ </div>
+ <div class="spaceHero"></div>
+</section>
+
+<div class="tabs">
+ <button class="tab active" data-tab="builder">① ロケットを作る</button>
+ <button class="tab" data-tab="sim">② 火星へ打ち上げ</button>
+ <button class="tab" data-tab="refs">実データ</button>
+ <button class="tab" data-tab="guide">用語</button>
+</div>
+
+<section id="builder" class="section active">
+<div class="grid2">
+ <div class="card">
+  <h2>ロケットビルダー</h2>
+  <div class="modebar">
+   <button class="mode active" data-mode="real">🚀 Atlas V 541 実機モード</button>
+   <button class="mode" data-mode="free">🔧 自由設計モード</button>
+  </div>
+
+  <div id="realMode">
+   <div class="info"><b>Mars 2020 / Perseverance の実際のスケール</b><br>NASA/JPLの公開値では、打ち上げ時のロケット＋宇宙機全体は約 <b>531 t</b>。推進剤は公開値を合計すると約 <b>476.9 t</b> で、全体の約90%が推進剤です。</div>
+   <div class="realMass">
+    <div class="massBox">総重量<b>約531 t</b></div>
+    <div class="massBox">推進剤<b>約476.9 t</b></div>
+    <div class="massBox">推進剤比率<b>約89.8%</b></div>
+   </div>
+   <div class="rocketStack">
+    <div class="stage srb"><b>固体ブースター ×4</b><span>推進剤 約172.0 t</span><span>Isp 約279 s</span></div>
+    <div class="stage core"><b>第1段 Atlas Booster</b><span>推進剤 284.089 t</span><span>乾燥 約21 t</span></div>
+    <div class="stage centaur"><b>第2段 Centaur</b><span>推進剤 20.830 t</span><span>Isp 450.5 s</span></div>
+    <div class="stage payload"><b>Mars 2020 宇宙機</b><span>約4.05 t級</span><span>ローバー 1.025 t</span></div>
+   </div>
+   <div class="note"><b>重要：</b>Atlas Vは複数のエンジン・段を使うので、531t全部を1本のロケット方程式に入れるのは不正確です。ここでは、火星へ向かう最終加速を担う<b>Centaur上段</b>を例に理想Δvを計算します。</div>
+   <div class="kpi" style="margin-top:10px"><div class="small">Centaur＋約4.05t宇宙機の最大理想Δv（参考）</div><div class="num" id="realDv">6.45</div><b>km/s</b></div>
+   <p class="small">この6.45 km/sはCentaurが理想条件で出せる上限に近い計算値で、火星への「2.945 km/s」と同じ意味ではありません。実際には地球周回軌道への投入や地球脱出にも使います。</p>
+  </div>
+
+  <div id="freeMode" class="hidden">
+   <div class="control"><label>乾燥重量 <span id="dryOut">15.0 t</span></label><input id="dry" type="range" min="1" max="100" step=".5" value="15"><div class="small">燃料を除いた本体の重さ</div></div>
+   <div class="control"><label>燃料重量 <span id="fuelOut">85.0 t</span></label><input id="fuel" type="range" min="0" max="500" step="1" value="85"></div>
+   <div class="control"><label>Isp <span id="ispOut">450 s</span></label><input id="isp" type="range" min="220" max="470" step="1" value="450"></div>
+   <div class="kpi"><div class="small">理想ロケット方程式</div><div class="num" id="freeDv">0.00</div><b>km/s</b></div>
+   <p class="small">自由設計は「1段のロケット」として計算する学習用モデルです。</p>
+  </div>
+
+  <div class="actions">
+   <button id="toSimReal" class="btn primary">このロケットで火星シミュレーションへ</button>
+  </div>
+ </div>
+
+ <div class="card">
+  <h2>実物とどれくらい違った？</h2>
+  <div class="note"><b>以前の例：本体15t＋燃料85t＝100t</b><br>これはMars 2020打ち上げ時の約531tに対して、約 <b>1/5</b> の大きさでした。</div>
+  <p>今回から「リアルモード」では、Atlas V 541の公開データをそのまま見られるようにしました。</p>
+  <div class="info">
+   <b>火星シミュレーション側で使う Δv は別物</b><br>
+   地球が太陽の周りをすでに約29.8 km/sで動いているところから、太陽中心の軌道を火星側へ広げるための追加速度として、ホーマン遷移の基準値 <b>2.9447 km/s</b> を使います。ロケットの「最大Δv」がこれより大きければ、そのうち必要な分だけ使います。
+  </div>
+ </div>
+</div>
+</section>
+
+<section id="sim" class="section">
+<div class="simLayout">
+ <div class="card viewer">
+  <h2>打ち上げシミュレーション</h2>
+  <div class="viewToggle">
+   <button type="button" class="viewBtn active" data-view="2d">2D軌道</button>
+   <button type="button" class="viewBtn" data-view="3d">3Dビュー</button>
+  </div>
+  <div class="cameraHint" id="cameraHint">2D：太陽系を真上から見た図。軌道の比較に向いています。</div>
+  <div class="screenWrap"><canvas id="space" width="920" height="610"></canvas></div>
+  <div class="launchBar">
+   <div><span class="live" id="liveText">条件を選んでください</span><div class="small">成功時は火星接近まで約200〜300日、失敗時は約550日まで太陽の周りを回り続けます。</div></div>
+   <button id="launchBtn" class="btn orange">🚀 打ち上げ！</button>
+  </div>
+  <div class="resultGrid">
+   <div class="result">経過日数<b id="daysOut">0 日</b></div>
+   <div class="result">最接近距離<b id="closestOut">— km</b></div>
+   <div class="result">評価<b id="gradeOut">—</b></div>
+  </div>
+  <div class="scoreRow">
+   <div class="score A">A<br><small>〜1万km</small></div><div class="score B">B<br><small>〜5万km</small></div>
+   <div class="score C">C<br><small>〜10万km</small></div><div class="score D">D<br><small>〜50万km</small></div>
+   <div class="score E">E<br><small>〜200万km</small></div><div class="score F">F<br><small>200万km超</small></div>
+  </div>
+ </div>
+
+ <div class="card">
+  <h3>① 火星との位置関係</h3>
+  <div class="control"><label>火星の先行角</label><select id="phase">
+   <option value="0">0°：地球と同じ方向</option><option value="20">20°</option><option value="30">30°</option>
+   <option value="44.34" selected>44.3°：お手本</option><option value="55">55°</option><option value="70">70°</option><option value="90">90°</option>
+  </select></div>
+  <h3 style="margin-top:13px">② Δv</h3>
+  <div class="control">
+   <div class="kpi" style="padding:12px;margin-bottom:9px">
+    <div class="small"><b>このロケットが使える最大Δv</b></div>
+    <div class="num" id="simDvDisplay" style="font-size:38px">未設定</div><b id="simDvUnit"></b>
+   </div>
+
+   <label>今回使うΔvを選ぶ <span id="burnDvOut">2.945 km/s</span></label>
+   <div class="small" style="margin-bottom:8px">
+    最大Δvはロケットビルダーが決めます。ここでは、その能力の中から「今回どれだけ使うか」を選びます。
+   </div>
+   <div id="dvPresetGrid" class="dvPresetGrid"></div>
+
+   <div class="note" style="margin-top:10px">
+    <b>⑤ 科学お手本＝2.945 km/s</b><br>
+    ホーマン遷移の基準。ロケットの最大Δvがこれ以上あれば選択できます。
+   </div>
+
+   <div class="info" style="margin-top:9px">
+    <b>最大Δv＝ロケットの能力</b><br>
+    <b>使用Δv＝今回の噴射で実際に使う量</b><br>
+    最大能力を毎回全部使うわけではありません。
+   </div>
+  </div>
+
+  <h3 style="margin-top:13px">③ 噴射方向を選ぶ</h3>
+  <div class="dirDiagram">
+   <div class="earthDot">地球</div><div id="dirArrow" class="dirArrow">➜</div>
+   <div class="axisNote"><b id="dirName">0° 進行方向</b><br><span id="dirExplain">地球が進む向きに加速。火星方向へ軌道を広げやすい。</span></div>
+  </div>
+  <div class="dirGrid" id="dirGrid"></div>
+  <div class="info" style="margin-top:10px"><b>向きの基準：</b>0°＝地球の進行方向。+90°＝太陽から外向き。−90°＝太陽方向。180°＝進行方向と真逆の「逆噴射」です。</div>
+  <div class="actions"><button id="demoSet" class="btn teal">お手本条件に戻す</button></div>
+ </div>
+</div>
+<div class="card" style="margin-top:15px">
+ <h3>実験記録</h3>
+ <div style="overflow:auto"><table id="log"><thead><tr><th>#</th><th>先行角</th><th>使用Δv</th><th>噴射方向</th><th>最接近</th><th>評価</th></tr></thead><tbody></tbody></table></div>
+ <div class="actions"><button id="recordBtn" class="btn ghost">この結果を記録</button><button id="clearBtn" class="btn ghost">記録を消す</button></div>
+</div>
+</section>
+
+<section id="refs" class="section">
+<div class="card">
+ <h2>実データ</h2>
+ <table>
+  <thead><tr><th>項目</th><th>値</th><th>意味</th></tr></thead>
+  <tbody>
+   <tr><td>Mars 2020 打ち上げ総重量</td><td><b>約531,000 kg</b></td><td>ロケット＋宇宙機＋Ingenuityを含む</td></tr>
+   <tr><td>Atlas V 第1段 推進剤</td><td><b>284,089 kg</b></td><td>液体酸素＋RP-1</td></tr>
+   <tr><td>固体ブースター4本 推進剤</td><td><b>約172,000 kg</b></td><td>約43,000 kg ×4</td></tr>
+   <tr><td>Centaur 推進剤</td><td><b>20,830 kg</b></td><td>液体水素＋液体酸素</td></tr>
+   <tr><td>Centaur Isp</td><td><b>450.5 s</b></td><td>RL10系エンジン</td></tr>
+   <tr><td>Perseverance rover</td><td><b>1,025 kg</b></td><td>ローバー単体</td></tr>
+  </tbody>
+ </table>
+ <p class="small">出典：NASA/JPL Mars 2020 Launch Press Kit、NASA Mars 2020 EIS、ULA Atlas V User's Guide。</p>
+</div>
+</section>
+
+<section id="guide" class="section">
+<div class="grid2">
+ <div class="card"><h3>Δv（デルタ・ブイ）</h3><p>速度の変化量。3 km/sなら「秒速3kmぶん速度を変える」。</p></div>
+ <div class="card"><h3>Isp（アイ・エス・ピー）</h3><p>比推力。エンジンの効率を表す代表的な値。単位は秒。</p></div>
+ <div class="card"><h3>先行角</h3><p>出発時に火星が地球より何度先を進んでいるか。</p></div>
+ <div class="card"><h3>逆噴射</h3><p>このアプリでは180°。地球の進行方向と真逆に加速して、太陽まわりの速度を下げる方向。</p></div><div class="card"><h3>2Dと3D</h3><p>計算は同じです。2Dは軌道を比較しやすく、3Dはカメラを傾けて位置関係を立体的に見せます。地球と火星の公転面は少し傾いていますが、この自由研究では同一平面として簡略化しています。</p></div>
+</div>
+</section>
+</main>
+
+<script>
+const root=document;
+const $=id=>document.getElementById(id);
+const G0=9.80665, AU=149597870.7, MU=1.32712440018e11, RMARS=3389.5;
+const rE=AU,rM=1.523679*AU,vE=Math.sqrt(MU/rE),vM=Math.sqrt(MU/rM);
+let chosenDir=0, result=null, animId=null, logs=[], viewMode='2d', builderMode='real', currentBuilderDv=6.45, selectedBurnDv=2.945;
+
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+ document.querySelectorAll('.section').forEach(x=>x.classList.remove('active'));
+ b.classList.add('active');$(b.dataset.tab).classList.add('active');
+}));
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+ const real=b.dataset.mode==='real';builderMode=real?'real':'free';
+ $('realMode').classList.toggle('hidden',!real);$('freeMode').classList.toggle('hidden',real);
+ currentBuilderDv = real ? parseFloat($('realDv').textContent) : parseFloat($('freeDv').textContent);
+}));
+
+
+document.querySelectorAll('.viewBtn').forEach(b=>b.addEventListener('click',()=>{
+ document.querySelectorAll('.viewBtn').forEach(x=>x.classList.remove('active'));
+ b.classList.add('active');viewMode=b.dataset.view;
+ $('cameraHint').textContent=viewMode==='3d'
+  ?'3D：カメラを斜め上から見た表示。地球・火星・探査機の位置関係を立体的に確認できます。軌道計算そのものは同じです。'
+  :'2D：太陽系を真上から見た図。軌道の比較に向いています。';
+ if(result) draw($('space'),result,1);
+}));
+
+function freeCalc(){
+ const dry=+$('dry').value,fuel=+$('fuel').value,isp=+$('isp').value;
+ $('dryOut').textContent=dry.toFixed(1)+' t';$('fuelOut').textContent=fuel.toFixed(1)+' t';$('ispOut').textContent=isp.toFixed(0)+' s';
+ const dv=fuel>0?isp*G0*Math.log((dry+fuel)/dry)/1000:0;$('freeDv').textContent=dv.toFixed(2);
+ if(builderMode==='free') currentBuilderDv=dv;
+}
+['dry','fuel','isp'].forEach(id=>$(id).addEventListener('input',freeCalc));freeCalc();
+
+
+function syncBuilderDvToSim(){
+ const sourceEl = builderMode==='real' ? $('realDv') : $('freeDv');
+ const parsed = parseFloat(sourceEl.textContent);
+ if(!Number.isFinite(parsed) || parsed<=0){
+   currentBuilderDv = null;
+   $('simDvDisplay').textContent='未設定';
+   $('simDvUnit').textContent='';
+   $('liveText').textContent='ロケットビルダーでΔvを計算してください';
+   buildDvPresets();
+   return false;
+ }
+ currentBuilderDv = parsed;
+ $('simDvDisplay').textContent=currentBuilderDv.toFixed(3);
+ $('simDvUnit').textContent='km/s';
+ selectedBurnDv = Math.min(2.944689,currentBuilderDv);
+ buildDvPresets();
+ $('burnDvOut').textContent=selectedBurnDv.toFixed(3)+' km/s';
+ $('liveText').textContent=`最大Δv ${currentBuilderDv.toFixed(3)} km/s のロケットを読み込みました。今回使うΔvを10パターンから選んでください`;
+ return true;
+}
+
+
+
+
+
+
+const dvPresetDefs=[
+ {key:'p1',label:'① 1.0 km/s',value:1.0,desc:'かなり弱い。火星軌道まで届きにくい。'},
+ {key:'p2',label:'② 1.5 km/s',value:1.5,desc:'弱い。軌道の広がりが不足しやすい。'},
+ {key:'p3',label:'③ 2.0 km/s',value:2.0,desc:'やや弱い。火星軌道より内側になりやすい。'},
+ {key:'p4',label:'④ 2.5 km/s',value:2.5,desc:'お手本より少し弱い。'},
+ {key:'p5',label:'⑤ 2.945 km/s お手本',value:2.944689,desc:'ホーマン遷移の基準値。'},
+ {key:'p6',label:'⑥ 3.5 km/s',value:3.5,desc:'やや強い。予定より外側へ行きやすい。'},
+ {key:'p7',label:'⑦ 4.0 km/s',value:4.0,desc:'強い。火星を通り越す可能性。'},
+ {key:'p8',label:'⑧ 4.5 km/s',value:4.5,desc:'かなり強い。'},
+ {key:'p9',label:'⑨ 5.0 km/s',value:5.0,desc:'非常に強い。'},
+ {key:'max',label:'⑩ 最大Δv',value:null,desc:'このロケットの能力を全部使う。'}
+];
+
+function buildDvPresets(){
+ const g=$('dvPresetGrid');
+ if(!g) return;
+ g.innerHTML='';
+ dvPresetDefs.forEach((d,idx)=>{
+   const actual = d.value===null ? currentBuilderDv : d.value;
+   const b=document.createElement('button');
+   b.type='button';
+   b.className='dvPresetBtn';
+   const unavailable = !Number.isFinite(currentBuilderDv) || !Number.isFinite(actual) || actual>currentBuilderDv+1e-9;
+   b.disabled=unavailable;
+   const shown = Number.isFinite(actual) ? actual.toFixed(actual<3?3:1) : '—';
+   b.innerHTML=`<div class="dvPresetTitle">${d.label}${d.value===null && Number.isFinite(actual)?'（'+actual.toFixed(3)+' km/s）':''}</div>
+   <div class="dvPresetDesc">${unavailable?'このロケットでは出せない':d.desc}</div>`;
+   if(Number.isFinite(selectedBurnDv) && Number.isFinite(actual) && Math.abs(selectedBurnDv-actual)<0.002){
+     b.classList.add('selected');
+   }
+   b.addEventListener('click',()=>{
+     if(b.disabled) return;
+     selectedBurnDv=actual;
+     $('burnDvOut').textContent=selectedBurnDv.toFixed(3)+' km/s';
+     document.querySelectorAll('.dvPresetBtn').forEach(x=>x.classList.remove('selected'));
+     b.classList.add('selected');
+     $('liveText').textContent=`今回使うΔv：${selectedBurnDv.toFixed(3)} km/s を選択`;
+   });
+   g.appendChild(b);
+ });
+}
+
+const directions=[
+ {a:0,icon:'⬆️',name:'0° 進行方向',desc:'地球の進む向き。火星側へ軌道を広げやすい。'},
+ {a:15,icon:'↗️',name:'+15° 少し外向き',desc:'進行方向＋少し太陽から外側。'},
+ {a:30,icon:'↗️',name:'+30° 外向き',desc:'外向き成分をやや強くする。'},
+ {a:60,icon:'↗️',name:'+60° かなり外向き',desc:'進行方向より外向きが強い。'},
+ {a:90,icon:'➡️',name:'+90° 真外向き',desc:'太陽からまっすぐ離れる方向。'},
+ {a:-15,icon:'↖️',name:'−15° 少し内向き',desc:'進行方向＋少し太陽側。'},
+ {a:-30,icon:'↖️',name:'−30° 内向き',desc:'太陽側の成分を増やす。'},
+ {a:-60,icon:'↖️',name:'−60° かなり内向き',desc:'進行方向より太陽側が強い。'},
+ {a:-90,icon:'⬅️',name:'−90° 太陽方向',desc:'太陽へまっすぐ向かう方向。'},
+ {a:180,icon:'⬇️',name:'180° 逆噴射',desc:'進行方向と真逆。太陽まわりの速度を下げる。'}
+];
+function buildDirs(){
+ const g=$('dirGrid');g.innerHTML='';
+ directions.forEach(d=>{
+  const b=document.createElement('button');b.type='button';b.className='dirBtn'+(d.a===0?' selected':'');
+  b.innerHTML=`<div class="dirTitle"><span class="arrow">${d.icon}</span>${d.name}</div><div class="dirDesc">${d.desc}</div>`;
+  b.addEventListener('click',()=>{chosenDir=d.a;document.querySelectorAll('.dirBtn').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');updateDir(d);});
+  g.appendChild(b);
+ });
+}
+function updateDir(d){
+ $('dirName').textContent=d.name;$('dirExplain').textContent=d.desc;
+ // Visual convention: 0° points up (prograde), +90° right (outward), -90° left (sunward), 180° down.
+ $('dirArrow').style.transform=`rotate(${d.a}deg)`;
+}
+buildDirs();updateDir(directions[0]);buildDvPresets();
+
+function rk4(s,dt){
+ function f(z){const r=Math.hypot(z.x,z.y),q=-MU/(r*r*r);return{x:z.vx,y:z.vy,vx:q*z.x,vy:q*z.y}}
+ const k1=f(s),z2={x:s.x+k1.x*dt/2,y:s.y+k1.y*dt/2,vx:s.vx+k1.vx*dt/2,vy:s.vy+k1.vy*dt/2},k2=f(z2),
+ z3={x:s.x+k2.x*dt/2,y:s.y+k2.y*dt/2,vx:s.vx+k2.vx*dt/2,vy:s.vy+k2.vy*dt/2},k3=f(z3),
+ z4={x:s.x+k3.x*dt,y:s.y+k3.y*dt,vx:s.vx+k3.vx*dt,vy:s.vy+k3.vy*dt},k4=f(z4);
+ return{x:s.x+dt*(k1.x+2*k2.x+2*k3.x+k4.x)/6,y:s.y+dt*(k1.y+2*k2.y+2*k3.y+k4.y)/6,vx:s.vx+dt*(k1.vx+2*k2.vx+2*k3.vx+k4.vx)/6,vy:s.vy+dt*(k1.vy+2*k2.vy+2*k3.vy+k4.vy)/6};
+}
+function grade(k){return k<=1e4?'A':k<=5e4?'B':k<=1e5?'C':k<=5e5?'D':k<=2e6?'E':'F'}
+function simulate(phaseDeg,dv,dirDeg,duration=350){
+ const ph=phaseDeg*Math.PI/180,dir=dirDeg*Math.PI/180,dt=3*3600,steps=Math.floor(duration*86400/dt),wM=vM/rM;
+ // At launch Earth is at +x; prograde is +y. Positive angle rotates toward +x = away from Sun.
+ let s={x:rE,y:0,vx:dv*Math.sin(dir),vy:vE+dv*Math.cos(dir)};
+ let best=Infinity,bestDay=0,path=[],mars=[],days=[];
+ for(let i=0;i<=steps;i++){
+  const t=i*dt,ma=ph+wM*t,mx=rM*Math.cos(ma),my=rM*Math.sin(ma),d=Math.hypot(s.x-mx,s.y-my);
+  // Grade the first Mars encounter only (first 330 days).
+  if(t/86400<=330 && d<best){best=d;bestDay=t/86400}
+  if(i%8===0){path.push([s.x,s.y]);mars.push([mx,my]);days.push(t/86400)}
+  s=rk4(s,dt);
+ }
+ const surface=Math.max(0,best-RMARS);
+ return{phaseDeg,dv,dirDeg,path,mars,days,bestDay,surface,grade:grade(surface)};
+}
+function projectPoint(x,y,W,H,scale){
+ const cx=W/2,cy=H/2;
+ if(viewMode==='2d') return [cx+x*scale,cy-y*scale,1];
+ // Visual 3D only: rotate orbital plane around x-axis and add perspective.
+ // Physics remains the same coplanar heliocentric model.
+ const tilt=58*Math.PI/180;
+ const yy=y*Math.cos(tilt), zz=y*Math.sin(tilt);
+ const camera=3.8*rM;
+ const persp=camera/(camera+zz);
+ return [cx+x*scale*persp,cy-yy*scale*persp,persp];
+}
+function ellipseOrbit(ctx,r,W,H,scale,color){
+ ctx.strokeStyle=color;ctx.lineWidth=2;ctx.beginPath();
+ for(let i=0;i<=180;i++){
+  const a=i/180*Math.PI*2,q=projectPoint(r*Math.cos(a),r*Math.sin(a),W,H,scale);
+  i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]);
+ }
+ ctx.stroke();
+}
+function draw(canvas,r,p=1){
+ const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;c.clearRect(0,0,W,H);
+ let grd=c.createLinearGradient(0,0,0,H);grd.addColorStop(0,'#020711');grd.addColorStop(1,'#061c36');c.fillStyle=grd;c.fillRect(0,0,W,H);
+ c.fillStyle='#ffffff77';for(let i=0;i<150;i++){let x=(i*191)%W,y=(i*79)%H;c.fillRect(x,y,1.2,1.2)}
+ const scale=Math.min(W,H)/(2*1.72*rM);
+ ellipseOrbit(c,rE,W,H,scale,'#245b99');ellipseOrbit(c,rM,W,H,scale,'#a94731');
+ const sun=projectPoint(0,0,W,H,scale);c.fillStyle='#ffc038';c.beginPath();c.arc(sun[0],sun[1],17,0,Math.PI*2);c.fill();c.fillStyle='#fff';c.font='16px sans-serif';c.fillText('太陽',sun[0]+21,sun[1]+5);
+ const e=projectPoint(rE,0,W,H,scale);c.fillStyle='#42a6ff';c.beginPath();c.arc(e[0],e[1],10,0,Math.PI*2);c.fill();c.fillStyle='#fff';c.fillText('地球',e[0]+14,e[1]+5);
+ const n=Math.max(1,Math.floor(r.path.length*p));
+ c.strokeStyle='#fff';c.lineWidth=2.2;c.beginPath();
+ r.path.slice(0,n).forEach((q,i)=>{const a=projectPoint(q[0],q[1],W,H,scale);i?c.lineTo(a[0],a[1]):c.moveTo(a[0],a[1])});c.stroke();
+ const q=r.path[Math.min(n-1,r.path.length-1)],a=projectPoint(q[0],q[1],W,H,scale);
+ c.fillStyle='#f7f7ff';c.beginPath();c.arc(a[0],a[1],Math.max(5,7*a[2]),0,Math.PI*2);c.fill();
+ const mq=r.mars[Math.min(n-1,r.mars.length-1)],m=projectPoint(mq[0],mq[1],W,H,scale);
+ c.fillStyle='#ef6835';c.beginPath();c.arc(m[0],m[1],Math.max(7,10*m[2]),0,Math.PI*2);c.fill();c.fillStyle='#fff';c.fillText('火星',m[0]+14,m[1]+5);
+ if(viewMode==='3d'){
+  c.fillStyle='#ffffffbb';c.font='13px sans-serif';c.fillText('3D表示（見せ方のみ）',18,24);
+  c.fillStyle='#ffffff88';c.fillText('軌道計算は太陽中心・同一平面の簡易モデル',18,43);
+ }
+}
+function animateLaunch(r){
+ cancelAnimationFrame(animId);const canvas=$('space');let start=null;
+ const isSuccess=['A','B','C','D'].includes(r.grade);
+ const shownDays=isSuccess ? Math.min(320,Math.max(250,r.bestDay+18)) : 550;
+ const maxIndex=Math.max(1,r.days.findIndex(d=>d>=shownDays));
+ const useIndex=maxIndex>0?maxIndex:r.days.length-1;
+ const durationMs=isSuccess?11000:14500;
+ $('launchBtn').disabled=true;$('launchBtn').textContent='飛行中…';
+ function frame(ts){
+  if(start===null)start=ts;
+  const p=Math.min(1,(ts-start)/durationMs);
+  const fracIndex=Math.min(useIndex,Math.floor(p*useIndex));
+  const drawP=(fracIndex+1)/r.path.length;
+  draw(canvas,r,drawP);
+  $('daysOut').textContent=r.days[fracIndex].toFixed(0)+' 日';
+  if(p<1){
+   $('liveText').textContent=`探査機飛行中… ${r.days[fracIndex].toFixed(0)}日目`;
+   animId=requestAnimationFrame(frame);
+  }else{
+   $('closestOut').textContent=Math.round(r.surface).toLocaleString()+' km';
+   $('gradeOut').innerHTML=`<span class="score ${r.grade}" style="display:inline-block;min-width:42px">${r.grade}</span>`;
+   $('liveText').textContent=isSuccess
+    ?`火星へ最接近：${r.bestDay.toFixed(1)}日後（地球→火星は約半周）`
+    :`火星を外したため ${shownDays}日まで太陽周回を続けました`;
+   $('launchBtn').disabled=false;$('launchBtn').textContent='🚀 もう一度打ち上げ！';
+  }
+ }
+ animId=requestAnimationFrame(frame);
+}
+$('launchBtn').addEventListener('click',()=>{
+ if(!Number.isFinite(currentBuilderDv)){
+   $('liveText').textContent='先にロケットビルダーでロケットを作り、「このロケットで火星シミュレーションへ」を押してください';
+   return;
+ }
+ if(!Number.isFinite(selectedBurnDv) || selectedBurnDv<=0 || selectedBurnDv>currentBuilderDv+1e-9){
+   $('liveText').textContent='このロケットで使えるΔvを選んでください';
+   return;
+ }
+ const phase=+$('phase').value,dv=selectedBurnDv;
+ result=simulate(phase,dv,chosenDir,550);
+ $('closestOut').textContent='計算中…';$('gradeOut').textContent='—';animateLaunch(result);
+});
+$('demoSet').addEventListener('click',()=>{
+ $('phase').value='44.34';
+ chosenDir=0;
+ document.querySelectorAll('.dirBtn').forEach((x,i)=>x.classList.toggle('selected',i===0));
+ updateDir(directions[0]);
+ if(Number.isFinite(currentBuilderDv) && currentBuilderDv>=2.944689){
+   selectedBurnDv=2.944689;
+   $('burnDvOut').textContent='2.945 km/s';
+   buildDvPresets();
+   $('liveText').textContent='科学お手本：先行角44.34° / 使用Δv 2.945 km/s / 進行方向0°';
+ }else if(Number.isFinite(currentBuilderDv)){
+   selectedBurnDv=currentBuilderDv;
+   $('burnDvOut').textContent=selectedBurnDv.toFixed(3)+' km/s';
+   buildDvPresets();
+   $('liveText').textContent='このロケットはお手本2.945 km/sに届かないため、最大Δvを選びました';
+ }else{
+   $('liveText').textContent='先にロケットを読み込んでください';
+ }
+});
+$('toSimReal').addEventListener('click',()=>{
+ if(!syncBuilderDvToSim()) return;
+ document.querySelector('[data-tab="sim"]').click();
+ $('phase').value='44.34';
+ chosenDir=0;
+ document.querySelectorAll('.dirBtn').forEach((x,i)=>x.classList.toggle('selected',i===0));
+ updateDir(directions[0]);
+});
+$('recordBtn').addEventListener('click',()=>{
+ if(!result)return;logs.push(result);const tb=$('log').querySelector('tbody');tb.innerHTML='';
+ logs.forEach((r,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${i+1}</td><td>${r.phaseDeg.toFixed(1)}°</td><td>${r.dv.toFixed(3)}</td><td>${r.dirDeg}°</td><td>${Math.round(r.surface).toLocaleString()} km</td><td><b>${r.grade}</b></td>`;tb.appendChild(tr)});
+});
+$('clearBtn').addEventListener('click',()=>{logs=[];$('log').querySelector('tbody').innerHTML=''});
+const initial=simulate(44.34,2.945,0,550);draw($('space'),initial,.02);$('liveText').textContent='プレビュー表示。ロケットを読み込むと「最大Δv」と「今回使うΔv」が分かれて表示されます';
+</script>
+</body>
+</html>
